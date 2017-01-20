@@ -10,6 +10,8 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 
+#define buffer_size 1600
+
 Game::~Game() {
     m_res_manager.shutdown();
     TTF_Quit();
@@ -22,14 +24,19 @@ Game::~Game() {
 }
 
 bool Game::init_audio() {
-    pa_sample_spec ss;
-    this->data = new float[1600];
+    this->data = new float[buffer_size];
 
-    ss.format = PA_SAMPLE_FLOAT32;
-    ss.rate = 48000;
-    ss.channels = 1;
+    pa_sample_spec sample_spec;
+    sample_spec.format = PA_SAMPLE_FLOAT32;
+    sample_spec.rate = 48000;
+    sample_spec.channels = 1;
+
+    pa_buffer_attr buffer_attr;
+    buffer_attr.maxlength = buffer_size * 4;
+    buffer_attr.fragsize = buffer_size * 4;
+
     int error;
-    this->pa = pa_simple_new(NULL, "GGJ2017", PA_STREAM_RECORD, NULL,  "record", &ss, NULL, NULL, &error);
+    this->pa = pa_simple_new(NULL, "GGJ2017", PA_STREAM_RECORD, NULL,  "record", &sample_spec, NULL, &buffer_attr, &error);
     if (!this->pa) {
         std::cout << pa_strerror(error) << std::endl;
         return false;
@@ -94,7 +101,7 @@ entityx::Entity Game::getPlayer() {
 }
 
 void Game::tick_audio() {
-    int len = 1600;
+    int len = buffer_size;
     int error;
     pa_simple_read(this->pa, this->data, len * 4, &error);
     pa_simple_flush(this->pa, &error);
