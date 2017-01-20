@@ -9,7 +9,7 @@ clang:
 	cd build; CXX=clang++ cmake ..; make -j
 
 run: default
-	build/innojam10
+	build/ggj2017
 
 web:
 	mkdir -p build-web
