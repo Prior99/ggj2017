@@ -16,7 +16,7 @@ void spawn_block(entityx::EntityManager& entities, float position, float height)
     entityx::Entity block = entities.create();
     float absolute_height = height * MAX_BLOCK_HEIGHT * HEIGHT;
 
-    block.assign<Position>(glm::vec2(BLOCK_WIDTH, HEIGHT - absolute_height));
+    block.assign<Position>(glm::vec2(position, HEIGHT - absolute_height));
     // TODO htf scale the images
     block.assign<Drawable>("block", BLOCK_WIDTH, BLOCK_HEIGHT);
     block.assign<Block>();
@@ -27,11 +27,12 @@ void spawn_collectable(entityx::EntityManager& entities, float position, float h
     collectable.assign<Position>();
 }
 
-void spawn_player(entityx::EntityManager& entities) {
+entityx::Entity spawn_player(entityx::EntityManager& entities) {
     entityx::Entity player = entities.create();
     player.assign<Position>(glm::vec2(300.f, 400.f));
     player.assign<Drawable>("gradient", 100, 100);
     player.assign<Player>();
+    return player;
 }
 
 #endif

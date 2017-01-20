@@ -26,8 +26,9 @@ class Game {
     bool is_running();
     void shutdown();
     void popstate();
-    
-    entityx::Entity getPlayer();
+
+    void set_player(entityx::Entity player);
+    entityx::Entity get_player(void);
     bool init_audio();
     void tick_audio();
     float take_amplitude();

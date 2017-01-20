@@ -6,9 +6,18 @@
 #include <SDL2/SDL.h>
 
 struct Position : entityx::Component<Position> {
+public:
     Position(glm::vec2 new_position = glm::vec2(0.0f, 0.0f), int width = 0, int height = 0)
         : m_position(new_position),
           m_rect{int(new_position.x), int(new_position.y), width, height} {
+    }
+
+    float get_x() {
+        return m_position.x;
+    }
+
+    float get_y() {
+        return m_position.y;
     }
 
     glm::vec2 position() {
@@ -25,7 +34,7 @@ struct Position : entityx::Component<Position> {
         m_rect.y = new_position.y;
     }
 
-  private:
+private:
     glm::vec2 m_position;
     SDL_Rect m_rect;
 };

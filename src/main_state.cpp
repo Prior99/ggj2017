@@ -27,7 +27,7 @@ int MainState::init() {
     m_systems.add<MapSystem>(game);
     m_systems.configure();
 
-    spawn_player(m_entities);
+    game->set_player(spawn_player(m_entities));
     return 0;
 }
 

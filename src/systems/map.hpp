@@ -28,31 +28,15 @@ public:
     MapSystem(Game *game): game(game), local_dt(0), left_border_position(0.0) {}
 
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
-        entityx::ComponentHandle<Position> position;
-        entityx::ComponentHandle<Player> player;
-        for(entityx::Entity player: entities.entities_with_components(player, position)) {
-            (void) player;
-            glm::vec2 oldPos = position->position();
-            position->set_position(oldPos + glm::vec2(10.0, 0.0));
-        }
+        auto player = game->get_player();
+        auto position = player.component<Position>();
+        float position_of_player = position->get_x() + 10.0;
+        position->set_position(glm::vec2(position_of_player, position->get_y()));
 
-		local_dt += dt;
-		if(local_dt > THRESHOLD) {
-			local_dt = 0;
-			entityx::ComponentHandle<Block> block;
-			entityx::ComponentHandle<Position> position;
-			entityx::ComponentHandle<Drawable> drawable;
-			for(entityx::Entity block: entities.entities_with_components(block, position, drawable)) {
-				(void) block;
-				glm::vec2 oldPos = position->position();
-				position->set_position(glm::vec2(oldPos.x - drawable->getWidth(), oldPos.y));
-            }
+        std::cout << position_of_player << std::endl;
 
-            // TODO
-            float position_of_player = 0.0;
-            float position_of_block = position_of_player + BLOCK_SPAWN_OFFSET;
-            spawn_block(entities, position_of_block, this->game->take_amplitude());
-        }
+        float position_of_block = position_of_player + BLOCK_SPAWN_OFFSET;
+        spawn_block(entities, position_of_block, this->game->take_amplitude());
     }
 };
 
