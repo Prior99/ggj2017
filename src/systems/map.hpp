@@ -33,10 +33,9 @@ public:
         float position_of_player = position->get_x() + 10.0;
         position->set_position(glm::vec2(position_of_player, position->get_y()));
 
-        std::cout << position_of_player << std::endl;
-
         float position_of_block = position_of_player + BLOCK_SPAWN_OFFSET;
         spawn_block(entities, position_of_block, this->game->take_amplitude());
+
     }
 };
 
