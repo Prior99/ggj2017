@@ -7,6 +7,8 @@
 #include <emscripten.h>
 #endif
 #include <iostream>
+#include <pulse/simple.h>
+#include <pulse/error.h>
 
 Game::~Game() {
     m_res_manager.shutdown();
@@ -19,9 +21,29 @@ Game::~Game() {
     SDL_Quit();
 }
 
+bool Game::init_audio() {
+    pa_sample_spec ss;
+    this->data = new float[2048];
+
+    ss.format = PA_SAMPLE_FLOAT32;
+    ss.rate = 44100;
+    ss.channels = 1;
+    int error;
+    this->pa = pa_simple_new(NULL, "GGJ2017", PA_STREAM_RECORD, NULL,  "record", &ss, NULL, NULL, &error);
+    if (!this->pa) {
+        std::cout << pa_strerror(error) << std::endl;
+        return false;
+    }
+    return true;
+}
+
 int Game::init() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+
+    if (!init_audio()) {
         return 1;
     }
 
@@ -70,11 +92,28 @@ entityx::Entity Game::getPlayer() {
     return this->player;
 }
 
+void Game::tick_audio() {
+    int len = 1600;
+    int error;
+    pa_simple_read(this->pa, this->data, len * 4, &error);
+
+    float avg = 0;
+    for (int i = 0; i < len; ++i) {
+        avg += glm::max(0.0f, this->data[i]) / len;
+    }
+    //std::cout << avg << std::endl;
+    for (float f = 0.0f; f < avg; f += 0.1) {
+        std::cout << "#";
+    }
+    //std::cout << actual_len << "  " << avg;
+    std::cout << std::endl;
+}
+
 void Game::mainloop() {
     int current_time = SDL_GetTicks();
     double dt = (current_time - m_last_frame_time) / 1000.0;
     m_last_frame_time = current_time;
-
+    this->tick_audio();
     m_states.top().second->update(dt);
 }
 
