@@ -22,6 +22,7 @@ class Game {
     bool is_running();
     void shutdown();
     void popstate();
+    entityx::Entity getPlayer();
 
     std::stack<std::pair<std::string, std::unique_ptr<State>>> &states();
     const std::string &statename() const;
@@ -41,6 +42,7 @@ class Game {
     std::stack<std::pair<std::string, std::unique_ptr<State>>> m_states;
     entityx::EntityX m_ex;
     ResourceManager m_res_manager;
+    entityx::Entity player;
 };
 
 #endif /* end of include guard: GAME_HPP */

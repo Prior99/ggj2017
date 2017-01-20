@@ -6,9 +6,6 @@
 #include "components/drawable.hpp"
 #include "components/multipartDrawable.hpp"
 #include "components/position.hpp"
-#include "components/light.hpp"
-#include "components/foreground.hpp"
-#include "components/game-text.hpp"
 #include "components/uniMultiDrawable.hpp"
 #include "components/overlay.hpp"
 #include "components/stackedDrawable.hpp"
@@ -40,7 +37,7 @@ class EntityDrawSystem {
         entityx::ComponentHandle<Position> position = entity.component<Position>();
         entityx::ComponentHandle<MultipartDrawable> multipartDrawable = entity.component<MultipartDrawable>();
 
-        auto pos = position->getPosition() - offset;
+        auto pos = position->position() - offset;
         SDL_Rect dest{pos.x, pos.y, multipartDrawable->getWidth(), 0};
         SDL_Rect src{0, 0, multipartDrawable->getWidth(), 0};
 
@@ -103,7 +100,7 @@ class EntityDrawSystem {
         auto texture = game->res_manager().texture(drawable->getTexture());
         glm::vec2 reps = drawable->getRepititions();
 
-        auto pos = position->getPosition() - offset;
+        auto pos = position->position() - offset;
 
         SDL_Rect leftClip, rightClip, centerClip;
 
@@ -122,7 +119,7 @@ class EntityDrawSystem {
         entityx::ComponentHandle<Position> position = entity.component<Position>();
         entityx::ComponentHandle<Drawable> drawable = entity.component<Drawable>();
 
-        auto pos = position->getPosition() - offset;
+        auto pos = position->position() - offset;
         SDL_Rect dest{pos.x, pos.y, drawable->getWidth(), drawable->getHeight()};
         SDL_Rect src{0, 0, drawable->getWidth(), drawable->getHeight()};
 
@@ -138,51 +135,11 @@ class EntityDrawSystem {
         SDL_RenderCopy(game->renderer(), texture, clip, &dest);
     }
 
-    static void renderText(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
-        entityx::ComponentHandle<Position> position = entity.component<Position>();
-        entityx::ComponentHandle<GameText> text = entity.component<GameText>();
-        bool fast = text->isFast();
-        auto player = game->getPlayer();
-        auto pp = player.component<Position>()->getPosition();
-        auto pos =  (fast ? pp - glm::vec2(24, -10) : position->getPosition()) - offset;
-        float progress = text->getTime() / TEXT_DURATION;
-        auto surf = TTF_RenderText_Blended(game->res_manager().font("font-small"), text->getText().c_str(), text->getColor());
-        if (!fast) {
-            SDL_LockSurface(surf);
-            SDL_PixelFormat* fmt = surf->format;
-            unsigned bpp = fmt->BytesPerPixel;
-            for (int y = 0; y < surf->h; y++)
-                for (int x = 0; x < surf->w; x++) {
-                    Uint32* pixel_ptr = (Uint32 *)((Uint8 *)surf->pixels + y * surf->pitch + x * bpp);
-                    Uint8 r, g, b, a;
-                    SDL_GetRGBA( *pixel_ptr, fmt, &r, &g, &b, &a );
-                    *pixel_ptr = SDL_MapRGBA( fmt, r, g, b, (int)(a * (0.5f + 0.5f * (1.0 - progress))));
-                }
-
-            SDL_UnlockSurface(surf);
-        }
-        auto texture = SDL_CreateTextureFromSurface(game->renderer(), surf);
-        int w, h;
-        SDL_QueryTexture(texture, nullptr, nullptr, &w, &h);
-        auto progressSize = glm::min(progress * 2, 1.0f);
-        int nW = w * progressSize;
-        int offsetX = pos.x + (w - nW) / 2;
-        SDL_Rect dest{pos.x + offsetX, pos.y - progress * 100, nW, h * progressSize};
-
-        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-        SDL_RenderCopy(game->renderer(), texture, NULL, &dest);
-        SDL_FreeSurface(surf);
-        text->updateTime(dt);
-        if (text->getTime() > TEXT_DURATION) {
-            entity.destroy();
-        }
-    }
-
     static void renderStacked(Game* game, entityx::Entity entity, glm::vec2 offset) {
         entityx::ComponentHandle<Position> position = entity.component<Position>();
         entityx::ComponentHandle<StackedDrawable> drawable = entity.component<StackedDrawable>();
 
-        auto pos = position->getPosition() - offset;
+        auto pos = position->position() - offset;
         std::vector<Drawable> layers = drawable->getLayers();
 
         for(Drawable layer: layers) {
@@ -209,22 +166,21 @@ class EntityDrawSystem {
             renderUniMultiPart(game, entity, offset);
         } else if(entity.component<StackedDrawable>()) {
             renderStacked(game, entity, offset);
-        } else if(entity.component<GameText>()) {
-            renderText(game, entity, offset, dt);
         }
     }
 
     void update(entityx::EntityManager &es, entityx::EventManager &events,
                 entityx::TimeDelta dt) {
-        auto playerPos = game->getPlayer().component<Position>()->getPosition();
-        entityx::ComponentHandle<Drawable> drawable = game->getPlayer().component<Drawable>();
-        if(drawable) {
-            auto playerWidth = drawable->getWidth();
-            auto playerHeight = drawable->getHeight();
-            playerPos = glm::vec2(playerPos.x + playerWidth / 2, playerPos.y + playerHeight / 2);
-        }
-        auto offset = playerPos - glm::vec2(GAME_WIDTH / 4.0f, GAME_HEIGHT) / 2.0f;
-        offset.y = glm::min(offset.y, 50.0f);
+        // auto playerPos = game->getPlayer().component<Position>()->position();
+        // entityx::ComponentHandle<Drawable> drawable = game->getPlayer().component<Drawable>();
+        // if(drawable) {
+        //     auto playerWidth = drawable->getWidth();
+        //     auto playerHeight = drawable->getHeight();
+        //     playerPos = glm::vec2(playerPos.x + playerWidth / 2, playerPos.y + playerHeight / 2);
+        // }
+        // auto offset = playerPos - glm::vec2(GAME_WIDTH / 4.0f, GAME_HEIGHT) / 2.0f;
+        // offset.y = glm::min(offset.y, 50.0f);
+        glm::vec2 offset = glm::vec2(0,0);
 
         // Change to render into rendertexture for now
         SDL_SetRenderTarget(game->renderer(), entityTexture);
@@ -232,21 +188,10 @@ class EntityDrawSystem {
         SDL_RenderClear(game->renderer());
 
         entityx::ComponentHandle<Position> position;
-        entityx::ComponentHandle<Foreground> foreground;
-
+        std::cout << "----------------------------" << std::endl;
         for (entityx::Entity entity : es.entities_with_components(position)) {
-            if(!entity.component<Foreground>() && !entity.component<Overlay>()) {
-                auto privOffset = glm::vec2(0, 0);
-                auto draw = entity.component<Drawable>();
-                if (draw) {
-                    privOffset = draw->getOffset();
-                }
-                renderEntity(game, entity, offset + privOffset, dt);
-            }
-        }
-
-        for(entityx::Entity entity: es.entities_with_components(position, foreground)) {
-            if(!entity.component<Overlay>()){
+            std::cout << position->position().x << " " << position->position().y << std::endl;
+            if(!entity.component<Overlay>()) {
                 auto privOffset = glm::vec2(0, 0);
                 auto draw = entity.component<Drawable>();
                 if (draw) {

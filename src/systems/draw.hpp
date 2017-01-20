@@ -27,21 +27,9 @@ class DrawSystem : public entityx::System<DrawSystem> {
     ~DrawSystem() {
     }
 
-    void drawBackground() {
-        auto bgSize = glm::vec2(800, 600);
-        auto playerPos = game->getPlayer().component<Position>()->getPosition();
-        auto offset = (playerPos + bgSize / 2) / PARALLAXITY;
-        SDL_Rect src{0, 0, (int)bgSize.x, (int)bgSize.y};
-        for (int x = -10; x < 10; x++) {
-                auto pos = glm::vec2(x * bgSize.x, -0) - offset;
-                SDL_Rect dest{(int)pos.x, (int)pos.y, (int)bgSize.x, (int)bgSize.y};
-                SDL_RenderCopy(game->renderer(), game->res_manager().texture("background"), &src, &dest);
-        }
-    }
-
     void update(entityx::EntityManager &es, entityx::EventManager &events, entityx::TimeDelta dt) override {
         entityDrawSystem.update(es, events, dt);
-        lightDrawSystem.update(es, events, dt);
+        // lightDrawSystem.update(es, events, dt);
         overlayDrawSystem.update(es, events, dt);
         auto src = SDL_Rect{0, 0, GAME_WIDTH, GAME_HEIGHT};
         auto dest = SDL_Rect{0, 0, GAME_WIDTH, GAME_HEIGHT};
@@ -50,18 +38,14 @@ class DrawSystem : public entityx::System<DrawSystem> {
         SDL_SetRenderTarget(renderer, gameTexture);
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
-        this->drawBackground();
         auto entityTexture = entityDrawSystem.getTexture();
-        auto lightTexture = lightDrawSystem.getTexture();
+        // auto lightTexture = lightDrawSystem.getTexture();
         auto overlayTexture = overlayDrawSystem.getTexture();
-        SDL_SetTextureBlendMode(entityTexture, SDL_BLENDMODE_BLEND);
+        // SDL_SetTextureBlendMode(entityTexture, SDL_BLENDMODE_BLEND);
         SDL_RenderCopy(renderer, entityTexture, &src, &dest);
-        if (this->game->isFrozen()) {
-            SDL_SetTextureBlendMode(lightTexture, SDL_BLENDMODE_MOD);
-            SDL_RenderCopy(renderer, lightTexture, &src, &dest);
-        }
+
         SDL_SetTextureBlendMode(overlayTexture, SDL_BLENDMODE_BLEND);
-        SDL_RenderCopy(renderer, overlayTexture, &src, &dest);
+        // SDL_RenderCopy(renderer, overlayTexture, &src, &dest);
         SDL_SetRenderTarget(renderer, nullptr);
         SDL_RenderCopy(renderer, gameTexture, &src, &destScreen);
         SDL_RenderPresent(renderer);

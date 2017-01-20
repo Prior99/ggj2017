@@ -58,13 +58,16 @@ int Game::init() {
 
     SDL_RenderSetLogicalSize(m_render, WIDTH, HEIGHT);
 
-    entityx::Entity entity = m_ex.entities.create();
-    entity.assign<Position>();
+    this->player = m_ex.entities.create();
 
     m_states.push({"main", std::make_unique<MainState>(this)});
     m_states.top().second->init();
 
     return 0;
+}
+
+entityx::Entity Game::getPlayer() {
+    return this->player;
 }
 
 void Game::mainloop() {

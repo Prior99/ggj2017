@@ -3,36 +3,68 @@
 
 #include "entityx/entityx.h"
 
+#include "animation.hpp"
+
 #include <SDL2/SDL.h>
 
 struct Drawable : entityx::Component<Drawable> {
-    Drawable(std::string key, float new_height, float new_width)
-        : m_texture_map_key(key), m_height(new_height), m_width(new_width) {
+    Drawable(std::string key, float width, float height, AnimationCollection animation = { "" }, glm::vec2 offset = glm::vec2(0, 0)):
+        textureKey(key),
+        height(height),
+        width(width),
+        animation(animation) {
     }
 
-    float height() {
-        return m_height;
+    float getHeight() {
+        return height;
     }
 
-    float width() {
-        return m_width;
+    float getWidth() {
+        return width;
     }
 
-    void set_hight(float new_height) {
-        m_height = new_height;
+    void setHeight(float height) {
+        this->height = height;
     }
 
-    void set_width(float new_width) {
-        m_width = new_width;
+    void setWidth(float width) {
+        this->width = width;
+    }
+
+    glm::vec2 getOffset() {
+        return this->offset;
+    }
+
+    void setOffset(glm::vec2 offset) {
+        this->offset = offset;
     }
 
     std::string texture_key() {
-        return m_texture_map_key;
+        return textureKey;
+    }
+
+    double getRotation() {
+        return rotation;
+    }
+
+    void setRotation(double r) {
+        this->rotation = r;
+    }
+
+    bool hasAnimation() {
+        return !animation.getTextureKey().empty();
+    }
+
+    AnimationCollection& getAnimation() {
+        return animation;
     }
 
   private:
-    std::string m_texture_map_key;
-    float m_height;
-    float m_width;
+    std::string textureKey;
+    float height;
+    float width;
+    AnimationCollection animation;
+    double rotation;
+    glm::vec2 offset;
 };
 #endif

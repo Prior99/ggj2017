@@ -5,6 +5,7 @@
 #include "systems/collision.hpp"
 #include "systems/controls.hpp"
 #include "systems/draw.hpp"
+#include "systems/map.hpp"
 
 #include "entityx/entityx.h"
 
@@ -20,6 +21,7 @@ int MainState::init() {
     m_systems.add<DrawSystem>(m_game);
     m_systems.add<ControlSystem>();
     m_systems.add<CollisionSystem>();
+    m_systems.add<MapSystem>();
     m_systems.configure();
 
     entityx::Entity player = m_entities.create();

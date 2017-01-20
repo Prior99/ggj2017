@@ -25,7 +25,7 @@ class LightDrawSystem {
 
     void update(entityx::EntityManager &es, entityx::EventManager &events,
                 entityx::TimeDelta dt) {
-        auto playerPos = game->getPlayer().component<Position>()->getPosition();
+        auto playerPos = game->getPlayer().component<Position>()->position();
         auto offset = playerPos - glm::vec2(GAME_WIDTH / 4.0f, GAME_HEIGHT) / 2.0f;
         offset.y = glm::min(offset.y, 50.0f);
 
@@ -49,7 +49,7 @@ class LightDrawSystem {
                 privOffset = draw->getOffset();
             }
 
-            auto coord = position->getPosition();
+            auto coord = position->position();
             auto tex = game->res_manager().texture(light->texture_key());
             auto drawable = entity.component<Drawable>();
 
@@ -62,12 +62,13 @@ class LightDrawSystem {
                 SDL_QueryTexture(tex, nullptr, nullptr, &wPlayer, &hPlayer);
             }
 
-            auto sanity = glm::min(game->getSanity(), MAX_SANITY) / MAX_SANITY;
-            auto wLight = glm::max(light->scale() * sanity, 60.0f);
+            // auto sanity = glm::min(game->getSanity(), MAX_SANITY) / MAX_SANITY;
+            // auto wLight = glm::max(light->scale() * sanity, 60.0f);
 
             // Converted position
-            auto pos = glm::vec2(coord.x + wPlayer / 2 - wLight / 2, coord.y + hPlayer / 2 - wLight / 2) - (offset + privOffset);
-            SDL_Rect dest{pos.x, pos.y, wLight, wLight};
+            // auto pos = glm::vec2(coord.x + wPlayer / 2 - wLight / 2, coord.y + hPlayer / 2 - wLight / 2) - (offset + privOffset);
+            glm::vec2 pos = position->position();
+            SDL_Rect dest{pos.x, pos.y, drawable->getWidth() * light->scale(), drawable->getHeight() * light->scale()};
 
             SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_ADD);
             SDL_SetTextureColorMod(tex, light->color().r, light->color().g, light->color().b);
