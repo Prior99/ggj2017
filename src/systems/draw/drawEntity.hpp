@@ -26,7 +26,7 @@ class EntityDrawSystem {
   public:
     EntityDrawSystem(Game *game) : game(game) {
         entityTexture = SDL_CreateTexture(
-            game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET, GAME_WIDTH, GAME_HEIGHT);
+            game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
     }
 
     ~EntityDrawSystem() {
@@ -171,15 +171,6 @@ class EntityDrawSystem {
 
     void update(entityx::EntityManager &es, entityx::EventManager &events,
                 entityx::TimeDelta dt) {
-        // auto playerPos = game->getPlayer().component<Position>()->position();
-        // entityx::ComponentHandle<Drawable> drawable = game->getPlayer().component<Drawable>();
-        // if(drawable) {
-        //     auto playerWidth = drawable->getWidth();
-        //     auto playerHeight = drawable->getHeight();
-        //     playerPos = glm::vec2(playerPos.x + playerWidth / 2, playerPos.y + playerHeight / 2);
-        // }
-        // auto offset = playerPos - glm::vec2(GAME_WIDTH / 4.0f, GAME_HEIGHT) / 2.0f;
-        // offset.y = glm::min(offset.y, 50.0f);
         glm::vec2 offset = glm::vec2(0,0);
 
         // Change to render into rendertexture for now

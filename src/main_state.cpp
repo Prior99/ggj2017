@@ -2,10 +2,13 @@
 
 #include "components/drawable.hpp"
 #include "components/position.hpp"
+
 #include "systems/collision.hpp"
 #include "systems/controls.hpp"
 #include "systems/draw.hpp"
 #include "systems/map.hpp"
+
+#include "spawners.hpp"
 
 #include "entityx/entityx.h"
 
@@ -24,11 +27,7 @@ int MainState::init() {
     m_systems.add<MapSystem>();
     m_systems.configure();
 
-    entityx::Entity player = m_entities.create();
-    player.assign<Position>(glm::vec2(300.f, 400.f));
-	player.assign<Drawable>("gradient", 100, 100);
-	player.assign<Player>(10);
-
+    spawn_player(m_entities);
     return 0;
 }
 

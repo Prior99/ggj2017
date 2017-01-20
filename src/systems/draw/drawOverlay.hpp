@@ -19,7 +19,7 @@ class OverlayDrawSystem {
     public:
         OverlayDrawSystem(Game *game) : game(game) {
             overlayTexture = SDL_CreateTexture(
-                game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET, GAME_WIDTH, GAME_HEIGHT);
+                game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
 
         }
 

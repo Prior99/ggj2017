@@ -19,7 +19,7 @@ class DrawSystem : public entityx::System<DrawSystem> {
   public:
     DrawSystem(Game *game) : game(game), entityDrawSystem(game), overlayDrawSystem(game) {
         gameTexture = SDL_CreateTexture(
-            game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET, GAME_WIDTH, GAME_HEIGHT);
+            game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
 
     }
 
@@ -29,8 +29,8 @@ class DrawSystem : public entityx::System<DrawSystem> {
     void update(entityx::EntityManager &es, entityx::EventManager &events, entityx::TimeDelta dt) override {
         entityDrawSystem.update(es, events, dt);
         overlayDrawSystem.update(es, events, dt);
-        auto src = SDL_Rect{0, 0, GAME_WIDTH, GAME_HEIGHT};
-        auto dest = SDL_Rect{0, 0, GAME_WIDTH, GAME_HEIGHT};
+        auto src = SDL_Rect{0, 0, WIDTH, HEIGHT};
+        auto dest = SDL_Rect{0, 0, WIDTH, HEIGHT};
         auto destScreen = SDL_Rect{0, 0, WIDTH, HEIGHT};
         auto renderer = game->renderer();
         SDL_SetRenderTarget(renderer, gameTexture);
