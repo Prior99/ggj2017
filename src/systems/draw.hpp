@@ -1,6 +1,11 @@
+#ifndef SYSTEM_DRAW_HPP
+#define SYSTEM_DRAW_HPP
+
 #include "game.hpp"
-#include "components/drawable.hpp"
-#include "components/position.hpp"
+
+#include "systems/draw/drawEntity.hpp"
+#include "systems/draw/drawLight.hpp"
+#include "systems/draw/drawOverlay.hpp"
 
 #include "strapon/resource_manager/resource_manager.hpp"
 
@@ -9,61 +14,65 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include <iostream>
+
 class DrawSystem : public entityx::System<DrawSystem> {
   public:
-    DrawSystem(Game *game) : m_game(game) {
-        int w, h;
-        SDL_RenderGetLogicalSize(game->renderer(), &w, &h);
-        m_camera = SDL_Rect{0, 0, w, h};
-        m_drawtex =
-            SDL_CreateTexture(game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET,
-                              game->world_size().w, game->world_size().h);
+    DrawSystem(Game *game) : game(game), entityDrawSystem(game), lightDrawSystem(game), overlayDrawSystem(game) {
+        gameTexture = SDL_CreateTexture(
+            game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET, GAME_WIDTH, GAME_HEIGHT);
+
     }
 
     ~DrawSystem() {
-        SDL_DestroyTexture(m_drawtex);
     }
 
-    void update(entityx::EntityManager &es, entityx::EventManager &events,
-                entityx::TimeDelta dt) override {
-
-        // Change to render into rendertexture for now
-        SDL_SetRenderTarget(m_game->renderer(), m_drawtex);
-        SDL_SetRenderDrawColor(m_game->renderer(), 0, 100, 200, 255);
-        SDL_RenderClear(m_game->renderer());
-
-        entityx::ComponentHandle<Drawable> drawable;
-        entityx::ComponentHandle<Position> position;
-
-        for (entityx::Entity entity : es.entities_with_components(drawable, position)) {
-
-            (void)entity;
-
-            SDL_Rect dest;
-            dest.x = position->position()[0];
-            dest.y = position->position()[1];
-            dest.w = drawable->width();
-            dest.h = drawable->height();
-
-            SDL_RenderCopyEx(m_game->renderer(),
-                             m_game->res_manager().texture(drawable->texture_key()), NULL, &dest, 0,
-                             NULL, SDL_FLIP_NONE);
+    void drawBackground() {
+        auto bgSize = glm::vec2(800, 600);
+        auto playerPos = game->getPlayer().component<Position>()->getPosition();
+        auto offset = (playerPos + bgSize / 2) / PARALLAXITY;
+        SDL_Rect src{0, 0, (int)bgSize.x, (int)bgSize.y};
+        for (int x = -10; x < 10; x++) {
+                auto pos = glm::vec2(x * bgSize.x, -0) - offset;
+                SDL_Rect dest{(int)pos.x, (int)pos.y, (int)bgSize.x, (int)bgSize.y};
+                SDL_RenderCopy(game->renderer(), game->res_manager().texture("background"), &src, &dest);
         }
+    }
 
-        auto surf = TTF_RenderText_Blended(m_game->res_manager().font("font20"), "LOL", {200, 100, 100, 150});
-        auto text = SDL_CreateTextureFromSurface(m_game->renderer(), surf);
-        SDL_Rect dest = {0, 0, 50, 50};
-        SDL_RenderCopy(m_game->renderer(), text, NULL, &dest); 
-        SDL_FreeSurface(surf);
-
-        // Render to final window
-        SDL_SetRenderTarget(m_game->renderer(), nullptr);
-        SDL_RenderCopy(m_game->renderer(), m_drawtex, &m_camera, nullptr);
-        SDL_RenderPresent(m_game->renderer());
+    void update(entityx::EntityManager &es, entityx::EventManager &events, entityx::TimeDelta dt) override {
+        entityDrawSystem.update(es, events, dt);
+        lightDrawSystem.update(es, events, dt);
+        overlayDrawSystem.update(es, events, dt);
+        auto src = SDL_Rect{0, 0, GAME_WIDTH, GAME_HEIGHT};
+        auto dest = SDL_Rect{0, 0, GAME_WIDTH, GAME_HEIGHT};
+        auto destScreen = SDL_Rect{0, 0, WIDTH, HEIGHT};
+        auto renderer = game->renderer();
+        SDL_SetRenderTarget(renderer, gameTexture);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderClear(renderer);
+        this->drawBackground();
+        auto entityTexture = entityDrawSystem.getTexture();
+        auto lightTexture = lightDrawSystem.getTexture();
+        auto overlayTexture = overlayDrawSystem.getTexture();
+        SDL_SetTextureBlendMode(entityTexture, SDL_BLENDMODE_BLEND);
+        SDL_RenderCopy(renderer, entityTexture, &src, &dest);
+        if (this->game->isFrozen()) {
+            SDL_SetTextureBlendMode(lightTexture, SDL_BLENDMODE_MOD);
+            SDL_RenderCopy(renderer, lightTexture, &src, &dest);
+        }
+        SDL_SetTextureBlendMode(overlayTexture, SDL_BLENDMODE_BLEND);
+        SDL_RenderCopy(renderer, overlayTexture, &src, &dest);
+        SDL_SetRenderTarget(renderer, nullptr);
+        SDL_RenderCopy(renderer, gameTexture, &src, &destScreen);
+        SDL_RenderPresent(renderer);
     }
 
   private:
-    Game *m_game;
-    SDL_Rect m_camera;
-    SDL_Texture *m_drawtex;
+    Game *game;
+    EntityDrawSystem entityDrawSystem;
+    LightDrawSystem lightDrawSystem;
+    OverlayDrawSystem overlayDrawSystem;
+    SDL_Texture *gameTexture;
 };
+
+#endif
