@@ -16,12 +16,12 @@
 
 #include "../spawners.hpp"
 
-const entityx::TimeDelta THRESHOLD = 1;
-const int SPAWN_X = 120;
+const entityx::TimeDelta THRESHOLD = 0.1;
+const int SPAWN_X = 800;
 
 class MapSystem : public entityx::System<MapSystem> {
   public:
-	MapSystem(): local_dt(0) {
+    MapSystem(Game *game): game(game), local_dt(0) {
 
 	}
 
@@ -36,16 +36,17 @@ class MapSystem : public entityx::System<MapSystem> {
 				(void) block;
 				glm::vec2 oldPos = position->position();
 				position->set_position(glm::vec2(oldPos.x - drawable->getWidth(), oldPos.y));
-			}
+            }
 
             // TODO
             float position_of_player = 0.0;
             float position_of_block = position_of_player + BLOCK_SPAWN_OFFSET;
-            spawn_block(entities, position_of_block, 0.5f);
-		}
-	}
+            spawn_block(entities, position_of_block, this->game->take_amplitude());
+        }
+    }
 
   private:
+    Game *game;
     entityx::TimeDelta local_dt;
 };
 

@@ -14,17 +14,17 @@
 
 #include <SDL2/SDL.h>
 
-MainState::MainState(Game *game) : m_game(game) {
+MainState::MainState(Game *game) : game(game) {
 }
 
 MainState::~MainState() {
 }
 
 int MainState::init() {
-    m_systems.add<DrawSystem>(m_game);
+    m_systems.add<DrawSystem>(game);
     m_systems.add<ControlSystem>();
     m_systems.add<CollisionSystem>();
-    m_systems.add<MapSystem>();
+    m_systems.add<MapSystem>(game);
     m_systems.configure();
 
     spawn_player(m_entities);
@@ -35,11 +35,11 @@ void MainState::update(double dt) {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT) {
-            m_game->shutdown();
+            game->shutdown();
         }
         if (e.type == SDL_KEYDOWN) {
             if (e.key.keysym.sym == SDLK_ESCAPE) {
-                m_game->shutdown();
+                game->shutdown();
             }
         }
     }

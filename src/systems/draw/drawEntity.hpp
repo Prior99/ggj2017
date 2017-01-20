@@ -175,7 +175,7 @@ class EntityDrawSystem {
 
         // Change to render into rendertexture for now
         SDL_SetRenderTarget(game->renderer(), entityTexture);
-        SDL_SetRenderDrawColor(game->renderer(), 0, 0, 0, 0);
+        SDL_SetRenderDrawColor(game->renderer(), 128, 128, 255, 0);
         SDL_RenderClear(game->renderer());
 
         entityx::ComponentHandle<Position> position;

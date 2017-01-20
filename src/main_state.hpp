@@ -15,7 +15,7 @@ class MainState : public State {
     void update(double dt) override;
 
   private:
-    Game *m_game;
+    Game *game;
     entityx::EventManager m_events;
     entityx::EntityManager m_entities{m_events};
     entityx::SystemManager m_systems{m_entities, m_events};
