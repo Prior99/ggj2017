@@ -19,9 +19,30 @@ Game::~Game() {
     SDL_Quit();
 }
 
+bool Game::init_audio() {
+    SDL_AudioSpec want;
+
+    SDL_memset(&want, 0, sizeof(want));
+    want.freq = 48000;
+    want.format = AUDIO_U16SYS;
+    want.channels = 1;
+    want.samples = 2048;
+    dev = SDL_OpenAudioDevice(NULL, 1, &want, &this->have, 0);
+    SDL_PauseAudioDevice(this->dev, 0);
+    if (dev == 0) {
+        SDL_Log("Failed to open audio: %s", SDL_GetError());
+        return false;
+    }
+    return true;
+}
+
 int Game::init() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+
+    if (!init_audio()) {
         return 1;
     }
 
@@ -67,11 +88,31 @@ int Game::init() {
     return 0;
 }
 
+
+void Game::tick_audio() {
+    int len = this->have.samples;
+    int *data = new int[len];
+    SDL_DequeueAudio(this->dev, data, 2 * 2048);
+    
+    std::cout << (float)data[0] << std::endl;
+    /*
+    for (int i = 0; i < actual_len; ++i) {
+        avg += data[i] / actual_len;
+    }
+    for (float f = 0.0f; f < avg; f += 0.1) {
+        std::cout << "#";
+    }
+    //std::cout << actual_len << "  " << avg;
+    std::cout << std::endl;
+    */
+    delete[] data;
+}
+
 void Game::mainloop() {
     int current_time = SDL_GetTicks();
     double dt = (current_time - m_last_frame_time) / 1000.0;
     m_last_frame_time = current_time;
-
+    this->tick_audio();
     m_states.top().second->update(dt);
 }
 
