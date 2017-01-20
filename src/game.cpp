@@ -23,10 +23,10 @@ Game::~Game() {
 
 bool Game::init_audio() {
     pa_sample_spec ss;
-    this->data = new float[2048];
+    this->data = new float[1600];
 
     ss.format = PA_SAMPLE_FLOAT32;
-    ss.rate = 44100;
+    ss.rate = 48000;
     ss.channels = 1;
     int error;
     this->pa = pa_simple_new(NULL, "GGJ2017", PA_STREAM_RECORD, NULL,  "record", &ss, NULL, NULL, &error);
@@ -97,6 +97,8 @@ void Game::tick_audio() {
     int len = 1600;
     int error;
     pa_simple_read(this->pa, this->data, len * 4, &error);
+    pa_simple_flush(this->pa, &error);
+    std::cout << "Latency " << (int)pa_simple_get_latency(this->pa, &error) << std::endl;
 
     float avg = 0;
     for (int i = 0; i < len; ++i) {
