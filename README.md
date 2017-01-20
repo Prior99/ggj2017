@@ -4,8 +4,7 @@
 
 ### 0. Basics
 
-Use a Linux-based machine. Preferrably Arch Linux. Register at [git.92k.de](https://git.92k.de/). Join the group 'gamejam'. Add your public ssh-key.
-If you do not have one, run: ```ssh-keygen``` and see the new key using ```cat ~/.ssh/id_rsa.pub```.
+Use a Linux-based machine. Preferrably Arch Linux.
 
 ### 1. Tools
 
