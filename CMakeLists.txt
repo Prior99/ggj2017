@@ -30,4 +30,6 @@ include_directories(SYSTEM
 target_link_libraries(ggj2017
     ${SDL2_LIBRARIES}
     entityx
+    pulse-simple
+    pulse
 )

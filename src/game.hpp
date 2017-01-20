@@ -13,6 +13,8 @@
 
 #include <stack>
 #include <string>
+#include <pulse/simple.h>
+#include <pulse/error.h>
 
 class Game {
   public:
@@ -35,14 +37,14 @@ class Game {
     const SDL_Rect &world_size() const;
 
   private:
-    SDL_AudioSpec have;
     bool m_running = true;
     int m_last_frame_time = 0;
+    float *data;
     SDL_Rect m_world_size = {0, 0, 1600, 1200};
 
     SDL_Renderer *m_render;
     SDL_Window *m_window;
-    SDL_AudioDeviceID dev;
+    pa_simple *pa;
     std::stack<std::pair<std::string, std::unique_ptr<State>>> m_states;
     entityx::EntityX m_ex;
     ResourceManager m_res_manager;

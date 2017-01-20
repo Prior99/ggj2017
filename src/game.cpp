@@ -7,6 +7,8 @@
 #include <emscripten.h>
 #endif
 #include <iostream>
+#include <pulse/simple.h>
+#include <pulse/error.h>
 
 Game::~Game() {
     m_res_manager.shutdown();
@@ -20,17 +22,16 @@ Game::~Game() {
 }
 
 bool Game::init_audio() {
-    SDL_AudioSpec want;
+    pa_sample_spec ss;
+    this->data = new float[2048];
 
-    SDL_memset(&want, 0, sizeof(want));
-    want.freq = 48000;
-    want.format = AUDIO_U16SYS;
-    want.channels = 1;
-    want.samples = 2048;
-    dev = SDL_OpenAudioDevice(NULL, 1, &want, &this->have, 0);
-    SDL_PauseAudioDevice(this->dev, 0);
-    if (dev == 0) {
-        SDL_Log("Failed to open audio: %s", SDL_GetError());
+    ss.format = PA_SAMPLE_FLOAT32;
+    ss.rate = 44100;
+    ss.channels = 1;
+    int error;
+    this->pa = pa_simple_new(NULL, "GGJ2017", PA_STREAM_RECORD, NULL,  "record", &ss, NULL, NULL, &error);
+    if (!this->pa) {
+        std::cout << pa_strerror(error) << std::endl;
         return false;
     }
     return true;
@@ -90,22 +91,20 @@ int Game::init() {
 
 
 void Game::tick_audio() {
-    int len = this->have.samples;
-    int *data = new int[len];
-    SDL_DequeueAudio(this->dev, data, 2 * 2048);
-    
-    std::cout << (float)data[0] << std::endl;
-    /*
-    for (int i = 0; i < actual_len; ++i) {
-        avg += data[i] / actual_len;
+    int len = 1600;
+    int error;
+    pa_simple_read(this->pa, this->data, len * 4, &error);
+
+    float avg = 0;
+    for (int i = 0; i < len; ++i) {
+        avg += glm::max(0.0f, this->data[i]) / len;
     }
+    //std::cout << avg << std::endl;
     for (float f = 0.0f; f < avg; f += 0.1) {
         std::cout << "#";
     }
     //std::cout << actual_len << "  " << avg;
     std::cout << std::endl;
-    */
-    delete[] data;
 }
 
 void Game::mainloop() {
