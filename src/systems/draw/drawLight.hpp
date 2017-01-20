@@ -33,7 +33,7 @@ class LightDrawSystem {
 
         // Change to render into light rendertexture for now
         SDL_SetRenderTarget(game->renderer(), lightTexture);
-        SDL_SetRenderDrawColor(game->renderer(), 0, 0, 0, 255);
+        SDL_SetRenderDrawColor(game->renderer(), 128, 128, 255, 255);
         SDL_RenderClear(game->renderer());
 
         entityx::ComponentHandle<Drawable> drawable;

@@ -46,7 +46,7 @@ class MapSystem : public entityx::System<MapSystem> {
         float top = 600 - this->game->take_amplitude() * 600;
         std::cout << top << std::endl;
         block.assign<Position>(glm::vec2(SPAWN_X, top));
-        block.assign<Drawable>("mock_block", 50, 600);
+        block.assign<Drawable>("block", 50, 600);
         block.assign<Block>();
     }
     entityx::TimeDelta local_dt;
