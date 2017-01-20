@@ -7,6 +7,7 @@
 #include "systems/controls.hpp"
 #include "systems/draw.hpp"
 #include "systems/map.hpp"
+#include "systems/garbage_collector.hpp"
 
 #include "spawners.hpp"
 
@@ -14,7 +15,7 @@
 
 #include <SDL2/SDL.h>
 
-MainState::MainState(Game *game) : game(game) {
+MainState::MainState(Game* game) : game(game) {
 }
 
 MainState::~MainState() {
@@ -25,6 +26,7 @@ int MainState::init() {
     m_systems.add<ControlSystem>();
     m_systems.add<CollisionSystem>();
     m_systems.add<MapSystem>(game);
+    m_systems.add<GarbageCollectionSystem>(game);
     m_systems.configure();
 
     game->set_player(spawn_player(m_entities));

@@ -18,5 +18,6 @@ static const int BLOCK_HEIGHT = 600;
 static const int BLOCK_WIDTH = 50;
 
 static const float BLOCK_SPAWN_OFFSET = 500.0;
+static const float DESPAWN_OFFSET = 100.0;
 
 #endif
