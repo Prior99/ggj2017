@@ -4,7 +4,6 @@
 #include "game.hpp"
 
 #include "systems/draw/drawEntity.hpp"
-#include "systems/draw/drawLight.hpp"
 #include "systems/draw/drawOverlay.hpp"
 
 #include "strapon/resource_manager/resource_manager.hpp"
@@ -18,7 +17,7 @@
 
 class DrawSystem : public entityx::System<DrawSystem> {
   public:
-    DrawSystem(Game *game) : game(game), entityDrawSystem(game), lightDrawSystem(game), overlayDrawSystem(game) {
+    DrawSystem(Game *game) : game(game), entityDrawSystem(game), overlayDrawSystem(game) {
         gameTexture = SDL_CreateTexture(
             game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET, GAME_WIDTH, GAME_HEIGHT);
 
@@ -29,7 +28,6 @@ class DrawSystem : public entityx::System<DrawSystem> {
 
     void update(entityx::EntityManager &es, entityx::EventManager &events, entityx::TimeDelta dt) override {
         entityDrawSystem.update(es, events, dt);
-        // lightDrawSystem.update(es, events, dt);
         overlayDrawSystem.update(es, events, dt);
         auto src = SDL_Rect{0, 0, GAME_WIDTH, GAME_HEIGHT};
         auto dest = SDL_Rect{0, 0, GAME_WIDTH, GAME_HEIGHT};
@@ -39,13 +37,11 @@ class DrawSystem : public entityx::System<DrawSystem> {
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
         auto entityTexture = entityDrawSystem.getTexture();
-        // auto lightTexture = lightDrawSystem.getTexture();
         auto overlayTexture = overlayDrawSystem.getTexture();
-        // SDL_SetTextureBlendMode(entityTexture, SDL_BLENDMODE_BLEND);
         SDL_RenderCopy(renderer, entityTexture, &src, &dest);
 
         SDL_SetTextureBlendMode(overlayTexture, SDL_BLENDMODE_BLEND);
-        // SDL_RenderCopy(renderer, overlayTexture, &src, &dest);
+        SDL_RenderCopy(renderer, overlayTexture, &src, &dest);
         SDL_SetRenderTarget(renderer, nullptr);
         SDL_RenderCopy(renderer, gameTexture, &src, &destScreen);
         SDL_RenderPresent(renderer);
@@ -54,7 +50,6 @@ class DrawSystem : public entityx::System<DrawSystem> {
   private:
     Game *game;
     EntityDrawSystem entityDrawSystem;
-    LightDrawSystem lightDrawSystem;
     OverlayDrawSystem overlayDrawSystem;
     SDL_Texture *gameTexture;
 };

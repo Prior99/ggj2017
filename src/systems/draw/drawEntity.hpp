@@ -188,9 +188,7 @@ class EntityDrawSystem {
         SDL_RenderClear(game->renderer());
 
         entityx::ComponentHandle<Position> position;
-        std::cout << "----------------------------" << std::endl;
         for (entityx::Entity entity : es.entities_with_components(position)) {
-            std::cout << position->position().x << " " << position->position().y << std::endl;
             if(!entity.component<Overlay>()) {
                 auto privOffset = glm::vec2(0, 0);
                 auto draw = entity.component<Drawable>();

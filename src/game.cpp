@@ -76,6 +76,7 @@ int Game::init() {
     }
 
     m_res_manager.load_texture("gradient", "res/gradient.png", m_render);
+    m_res_manager.load_texture("mock_block", "res/mock-block.png", m_render);
     m_res_manager.load_font("font20", "res/DejaVuSans.ttf", 20);
 
     SDL_RenderSetLogicalSize(m_render, WIDTH, HEIGHT);
@@ -106,7 +107,7 @@ void Game::tick_audio() {
         std::cout << "#";
     }
     //std::cout << actual_len << "  " << avg;
-    std::cout << std::endl;
+    // std::cout << std::endl;
 }
 
 void Game::mainloop() {

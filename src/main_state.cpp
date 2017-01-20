@@ -45,7 +45,5 @@ void MainState::update(double dt) {
         }
     }
 
-    m_systems.update<DrawSystem>(dt);
-    m_systems.update<ControlSystem>(dt);
-    m_systems.update<CollisionSystem>(dt);
+    m_systems.update_all(dt);
 }
