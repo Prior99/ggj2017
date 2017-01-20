@@ -20,12 +20,22 @@ const entityx::TimeDelta THRESHOLD = 0.1;
 const int SPAWN_X = 800;
 
 class MapSystem : public entityx::System<MapSystem> {
-  public:
-    MapSystem(Game *game): game(game), local_dt(0) {
-
-	}
+private:
+    Game *game;
+    entityx::TimeDelta local_dt;
+    float left_border_position;
+public:
+    MapSystem(Game *game): game(game), local_dt(0), left_border_position(0.0) {}
 
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
+        entityx::ComponentHandle<Position> position;
+        entityx::ComponentHandle<Player> player;
+        for(entityx::Entity player: entities.entities_with_components(player, position)) {
+            (void) player;
+            glm::vec2 oldPos = position->position();
+            position->set_position(oldPos + glm::vec2(10.0, 0.0));
+        }
+
 		local_dt += dt;
 		if(local_dt > THRESHOLD) {
 			local_dt = 0;
@@ -44,10 +54,6 @@ class MapSystem : public entityx::System<MapSystem> {
             spawn_block(entities, position_of_block, this->game->take_amplitude());
         }
     }
-
-  private:
-    Game *game;
-    entityx::TimeDelta local_dt;
 };
 
 #endif

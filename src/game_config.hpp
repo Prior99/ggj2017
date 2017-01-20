@@ -14,6 +14,7 @@ static const int WIDTH = 1024;
 static const int HEIGHT = 768;
 
 static const float MAX_BLOCK_HEIGHT = 0.9;
+static const int BLOCK_HEIGHT = 600;
 static const int BLOCK_WIDTH = 50;
 
 static const float BLOCK_SPAWN_OFFSET = 500.0;

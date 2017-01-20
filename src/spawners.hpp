@@ -16,9 +16,9 @@ void spawn_block(entityx::EntityManager& entities, float position, float height)
     entityx::Entity block = entities.create();
     float absolute_height = height * MAX_BLOCK_HEIGHT * HEIGHT;
 
-    block.assign<Position>(glm::vec2(BLOCK_WIDTH, absolute_height));
+    block.assign<Position>(glm::vec2(BLOCK_WIDTH, HEIGHT - absolute_height));
     // TODO htf scale the images
-    block.assign<Drawable>("mock_block", BLOCK_WIDTH, absolute_height);
+    block.assign<Drawable>("block", BLOCK_WIDTH, BLOCK_HEIGHT);
     block.assign<Block>();
 }
 
