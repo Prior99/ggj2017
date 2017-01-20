@@ -42,6 +42,9 @@ class Game {
     bool m_running = true;
     int m_last_frame_time = 0;
     float *data;
+    float absolute_max = 0.0f;
+    float absolute_min = 0.0f;
+    float current_amplitude = 0.0f;
     SDL_Rect m_world_size = {0, 0, 1600, 1200};
 
     SDL_Renderer *m_render;
