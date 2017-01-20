@@ -19,34 +19,37 @@ const int SPAWN_X = 120;
 
 class MapSystem : public entityx::System<MapSystem> {
   public:
-	MapSystem(): local_dt(0) {
+    MapSystem(Game *game): game(game), local_dt(0) {
 
-	}
+    }
 
-	void update(entityx::EntityManager &entities, entityx::EventManager &events, entityx::TimeDelta dt) {
-		local_dt += dt;
-		if(local_dt > THRESHOLD) {
-			local_dt = 0;
-			entityx::ComponentHandle<Block> block;
-			entityx::ComponentHandle<Position> position;
-			entityx::ComponentHandle<Drawable> drawable;
-			for(entityx::Entity block: entities.entities_with_components(block, position, drawable)) {
-				(void) block;
-				glm::vec2 oldPos = position->position();
-				position->set_position(glm::vec2(oldPos.x - drawable->getWidth(), oldPos.y));
-			}
-			this->spawn_block(entities, dt);
-		}
-	}
+    void update(entityx::EntityManager &entities, entityx::EventManager &events, entityx::TimeDelta dt) {
+        local_dt += dt;
+        if(local_dt > THRESHOLD) {
+            local_dt = 0;
+            entityx::ComponentHandle<Block> block;
+            entityx::ComponentHandle<Position> position;
+            entityx::ComponentHandle<Drawable> drawable;
+            for(entityx::Entity block: entities.entities_with_components(block, position, drawable)) {
+                (void) block;
+                glm::vec2 oldPos = position->position();
+                position->set_position(glm::vec2(oldPos.x - drawable->getWidth(), oldPos.y));
+            }
+            this->spawn_block(entities, dt);
+        }
+    }
 
   private:
-	void spawn_block(entityx::EntityManager &entities, entityx::TimeDelta dt) {
-		entityx::Entity block = entities.create();
-		block.assign<Position>(glm::vec2(SPAWN_X, -300));
-		block.assign<Drawable>("mock_block", 40, 600);
-		block.assign<Block>();
-	}
-	entityx::TimeDelta local_dt;
+    Game *game;
+    void spawn_block(entityx::EntityManager &entities, entityx::TimeDelta dt) {
+        entityx::Entity block = entities.create();
+        float top = 600 - this->game->take_amplitude() * 600;
+        std::cout << top << std::endl;
+        block.assign<Position>(glm::vec2(SPAWN_X, top));
+        block.assign<Drawable>("mock_block", 40, 600);
+        block.assign<Block>();
+    }
+    entityx::TimeDelta local_dt;
 };
 
 #endif

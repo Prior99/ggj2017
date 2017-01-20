@@ -105,7 +105,16 @@ void Game::tick_audio() {
 
     this->absolute_max = glm::max(this->absolute_max, avg);
     this->absolute_min = glm::min(this->absolute_min, avg);
-    this->current_amplitude = (avg / this->absolute_max) - this->absolute_min;
+    this->amplitudes.push_back((avg / this->absolute_max) - this->absolute_min);
+}
+
+float Game::take_amplitude() {
+    float max;
+    for (std::vector<float>::iterator it = this->amplitudes.begin(); it != this->amplitudes.end(); ++it) {
+        max = glm::max(max, *it);
+    }
+    this->amplitudes.clear();
+    return max;
 }
 
 void Game::mainloop() {

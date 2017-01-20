@@ -10,6 +10,7 @@
 #include "entityx/entityx.h"
 
 #include <SDL2/SDL.h>
+#include <vector>
 
 #include <stack>
 #include <string>
@@ -29,6 +30,7 @@ class Game {
     entityx::Entity getPlayer();
     bool init_audio();
     void tick_audio();
+    float take_amplitude();
 
     std::stack<std::pair<std::string, std::unique_ptr<State>>> &states();
     const std::string &statename() const;
@@ -44,7 +46,7 @@ class Game {
     float *data;
     float absolute_max = 0.0f;
     float absolute_min = 0.0f;
-    float current_amplitude = 0.0f;
+    std::vector<float> amplitudes;
     SDL_Rect m_world_size = {0, 0, 1600, 1200};
 
     SDL_Renderer *m_render;
