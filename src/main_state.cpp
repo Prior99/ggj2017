@@ -9,6 +9,7 @@
 #include "systems/map.hpp"
 #include "systems/garbage_collector.hpp"
 #include "systems/token.hpp"
+#include "systems/animation.hpp"
 
 #include "spawners.hpp"
 
@@ -29,6 +30,7 @@ int MainState::init() {
     m_systems.add<MapSystem>(game);
     m_systems.add<GarbageCollectionSystem>(game);
     m_systems.add<TokenSystem>(game);
+    m_systems.add<AnimationSystem>();
     m_systems.configure();
 
     game->set_player(spawn_player(m_entities));

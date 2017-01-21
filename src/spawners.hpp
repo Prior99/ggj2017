@@ -32,7 +32,7 @@ entityx::Entity spawn_player(entityx::EntityManager& entities) {
     entityx::Entity player = entities.create();
     player.assign<Position>(glm::vec2(300.f, 400.f));
     AnimationCollection anim_collection("jonny");
-    anim_collection.addAnimation("normal", 0, 8, 0.75f, glm::vec2(100, 146));
+    anim_collection.addAnimation("normal", 0, 8, 2.0f, glm::vec2(100, 146));
     anim_collection.setAnimation("normal", AnimationPlaybackType::LOOP);
     player.assign<Drawable>("jonny", 100, 146, anim_collection);
     player.assign<Player>();

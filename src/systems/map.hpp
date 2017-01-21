@@ -30,7 +30,7 @@ private:
 public:
     MapSystem(Game *game): game(game), local_dt(0), left_border_position(0.0) {}
     virtual void configure(entityx::EntityManager& entities, entityx::EventManager& events) {
-        for(int i=-1; i<WIDTH/BLOCK_WIDTH; i++)
+        for(int i=-1; i<WIDTH/BLOCK_WIDTH + 10; i++)
             spawn_block(entities, i*BLOCK_WIDTH);
     }
 

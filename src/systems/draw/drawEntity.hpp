@@ -83,7 +83,6 @@ class EntityDrawSystem {
             //if(animation.initialized() && animation.isRunning()) {
                 texture = game->res_manager().texture(animation.getTextureKey());
                 clip = animation.getAnimationFrame(clip);
-                animation.update(dt);
             //}
         }
         else
@@ -129,7 +128,7 @@ class EntityDrawSystem {
                 entityx::TimeDelta dt) {
         auto player = game->get_player();
         auto position = player.component<Position>();
-        glm::vec2 offset = glm::vec2(position->position.x, 0.0);
+        glm::vec2 offset = glm::vec2(position->position.x - PLAYER_OFFSET, 0.0);
 
         // Change to render into rendertexture for now
         SDL_SetRenderTarget(game->renderer(), entityTexture);

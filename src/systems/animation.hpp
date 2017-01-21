@@ -1,16 +1,13 @@
 #ifndef ANIMATION_SYSTEM_CPP
 #define ANIMATION_SYSTEM_CPP
 
-#include "components/drawable.hpp"
-#include "components/multipartDrawable.hpp"
-
-#include "entityx/entityx.h"
-
 #include <iostream>
+#include "entityx/entityx.h"
+#include "components/drawable.hpp"
 
 class AnimationSystem : public entityx::System<AnimationSystem> {
     public:
-        AnimationSystem() { }
+        AnimationSystem() {}
 
         void update(entityx::EntityManager &es, entityx::EventManager &events, double dt) {
             entityx::ComponentHandle<Drawable> drawable;
