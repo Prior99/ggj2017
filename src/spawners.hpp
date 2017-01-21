@@ -1,5 +1,5 @@
-#ifndef LOLOLROFLINCLUDEGUARD
-#define LOLOLROFLINCLUDEGUARD
+#ifndef SPAWNERS_HPP
+#define SPAWNERS_HPP
 
 #include "entityx/entityx.h"
 #include <glm/vec2.hpp>
@@ -22,9 +22,11 @@ void spawn_block(entityx::EntityManager& entities, float position, float height)
     block.assign<Block>();
 }
 
-void spawn_collectable(entityx::EntityManager& entities, float position, float height) {
+void spawn_collectable(entityx::EntityManager& entities, float position, float start_height, float end_height) {
     entityx::Entity collectable = entities.create();
-    collectable.assign<Position>();
+    collectable.assign<Position>(glm::vec2(position, start_height));
+    collectable.assign<Drawable>("trash", 20, 20);
+    collectable.assign<Collectable>(end_height);
 }
 
 entityx::Entity spawn_player(entityx::EntityManager& entities) {

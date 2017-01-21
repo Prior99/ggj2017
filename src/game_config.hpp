@@ -20,4 +20,7 @@ static const int BLOCK_WIDTH = 50;
 static const float BLOCK_SPAWN_OFFSET = 500.0;
 static const float DESPAWN_OFFSET = 100.0;
 
+static const float COLLECTABLE_BAND = 2; // portion of the screen in which items spawn
+static const float PROTECTED_TOP = 100; // pixels at top, in which no items spawn
+static const float DROP_SPEED = 100;
 #endif

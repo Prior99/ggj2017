@@ -84,6 +84,7 @@ int Game::init() {
 
     m_res_manager.load_texture("gradient", "res/gradient.png", m_render);
     m_res_manager.load_texture("block", "res/gj-block.png", m_render);
+    m_res_manager.load_texture("trash", "res/mock-trash.png", m_render);
     m_res_manager.load_font("font20", "res/DejaVuSans.ttf", 20);
 
     SDL_RenderSetLogicalSize(m_render, WIDTH, HEIGHT);
@@ -107,7 +108,7 @@ void Game::tick_audio() {
     int error;
     pa_simple_read(this->pa, this->data, len * 4, &error);
     pa_simple_flush(this->pa, &error);
-    std::cout << "Latency " << (int)pa_simple_get_latency(this->pa, &error) << std::endl;
+    // std::cout << "Latency " << (int)pa_simple_get_latency(this->pa, &error) << std::endl;
 
     float avg = 0;
     for (int i = 0; i < len; ++i) {
