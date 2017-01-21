@@ -50,6 +50,7 @@ class OverlayDrawSystem {
                 SDL_QueryTexture(texture, nullptr, nullptr, &w, &h);
 
                 SDL_Rect dest{position->position.x, position->position.y, w, h};
+                // std::cout << position->position.x  << "," << position->position.y << std::endl;
 
                 SDL_RenderCopy(game->renderer(), texture, NULL, &dest);
                 SDL_FreeSurface(surf);

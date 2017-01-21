@@ -8,6 +8,8 @@
 #include "components/uniMultiDrawable.hpp"
 #include "components/overlay.hpp"
 #include "components/stackedDrawable.hpp"
+#include "components/block.hpp"
+#include "components/game-text.hpp"
 
 #include "utils.hpp"
 
@@ -114,13 +116,94 @@ class EntityDrawSystem {
         }
     }
 
+    static void renderBlock(Game *game, entityx::Entity entity, glm::vec2 offset, double dt) {
+        entityx::ComponentHandle<Position> position = entity.component<Position>();
+        entityx::ComponentHandle<Drawable> drawable = entity.component<Drawable>();
+        entityx::ComponentHandle<Block> block = entity.component<Block>();
+        auto pos = position->position - offset;
+        auto playerpos = game->get_player().component<Position>()->position;
+        auto texture = game->res_manager().texture("water");
+        int width, height;
+        SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+        auto off = (int)(playerpos.x * 1.5) % width;
+        if (off + pos.x + 50 > width) {
+            off -= width;
+        }
+        SDL_Rect dest{(int)pos.x, (int)pos.y, drawable->getWidth(), HEIGHT - pos.y};
+        SDL_Rect src{pos.x + off, pos.y, drawable->getWidth(), HEIGHT - pos.y};
+
+        SDL_RenderCopy(game->renderer(), texture, &src, &dest);
+        //if (pos.x < WIDTH * 0.8) {
+            auto die_gischt_textur = game->res_manager().texture("wave");
+            int gischt_width, gischt_height;
+            SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+            int animstep;
+            //if (pos.x > WIDTH * 0.6)  {
+                animstep = ((int)playerpos.x / 50 + block->num) % 4;
+            //} else {
+            //    animstep = 4;
+            //}
+
+            SDL_Rect dest_von_die_gischt{pos.x, pos.y - 20, 50, 36};
+            SDL_Rect src_von_die_gischt{50 * animstep, 0, 50, 36};
+
+            SDL_RenderCopy(game->renderer(), die_gischt_textur, &src_von_die_gischt, &dest_von_die_gischt);
+        //}
+    }
+
     static void renderEntity(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
-        if (entity.component<Drawable>()) {
+        if (entity.component<Block>()) {
+            renderBlock(game, entity, offset, dt);
+        } else if (entity.component<Drawable>()) {
             renderSinglePart(game, entity, offset, dt);
         } else if (entity.component<UniMultipartDrawable>()) {
             renderUniMultiPart(game, entity, offset);
         } else if(entity.component<StackedDrawable>()) {
             renderStacked(game, entity, offset);
+        } else if(entity.component<GameText>()) {
+            renderText(game, entity, offset, dt);
+        }
+    }
+
+    static void renderText(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
+        entityx::ComponentHandle<Position> position = entity.component<Position>();
+        entityx::ComponentHandle<GameText> text = entity.component<GameText>();
+        bool fast = text->isFast();
+        auto player = game->get_player();
+        auto pp = player.component<Position>()->position;
+        auto pos =  (fast ? pp - glm::vec2(150, 100) + position->position: position->position) - offset;
+        position->position.y -= 1;
+        float progress = text->getTime() / TEXT_DURATION;
+        auto surf = TTF_RenderText_Blended(game->res_manager().font("font-small"), text->getText().c_str(), text->getColor());
+        if (!fast) {
+            SDL_LockSurface(surf);
+            SDL_PixelFormat* fmt = surf->format;
+            unsigned bpp = fmt->BytesPerPixel;
+            for (int y = 0; y < surf->h; y++)
+                for (int x = 0; x < surf->w; x++) {
+                    Uint32* pixel_ptr = (Uint32 *)((Uint8 *)surf->pixels + y * surf->pitch + x * bpp);
+                    Uint8 r, g, b, a;
+                    SDL_GetRGBA( *pixel_ptr, fmt, &r, &g, &b, &a );
+                    *pixel_ptr = SDL_MapRGBA( fmt, r, g, b, (int)(a * (0.5f + 0.5f * (1.0 - progress))));
+                }
+
+            SDL_UnlockSurface(surf);
+        }
+        auto texture = SDL_CreateTextureFromSurface(game->renderer(), surf);
+        int w, h;
+        SDL_QueryTexture(texture, nullptr, nullptr, &w, &h);
+        auto progressSize = glm::min(progress * 2, 1.0f);
+        int nW = w * progressSize;
+        int offsetX = pos.x + (w - nW) / 2;
+        std::cout << "rendertext" << (pos.x + offsetX) << "," << (pos.y - progress * 100) << std::endl;
+        SDL_Rect dest{pos.x + offsetX, pos.y - progress * 100, nW, h * progressSize};
+
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+        SDL_RenderCopy(game->renderer(), texture, NULL, &dest);
+        SDL_FreeSurface(surf);
+        text->updateTime(dt);
+        if (text->getTime() > TEXT_DURATION) {
+            entity.destroy();
         }
     }
 

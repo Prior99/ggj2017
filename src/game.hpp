@@ -32,7 +32,6 @@ class Game {
     bool init_audio();
     void tick_audio();
     float take_amplitude();
-
     std::stack<std::pair<std::string, std::unique_ptr<State>>> &states();
     const std::string &statename() const;
 

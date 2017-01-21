@@ -18,7 +18,7 @@
 #include "../events.hpp"
 #include "../spawners.hpp"
 
-#define BLOCK_SIZE 40
+#define BLOCK_SIZE 50
 #define MAX_CHANGE 15
 
 class MapSystem : public entityx::System<MapSystem>,
@@ -28,7 +28,7 @@ private:
     entityx::TimeDelta local_dt;
     float left_border_position;
     float last_height = HEIGHT / 2.0f;
-    float WAVE_GENERATOR_X = WIDTH * 0.6;
+    float WAVE_GENERATOR_X = WIDTH * 0.4;
 public:
     MapSystem(Game *game): game(game), local_dt(0), left_border_position(0.0) {}
     void configure(entityx::EntityManager& entities, entityx::EventManager& events) override {
@@ -170,9 +170,9 @@ public:
     }
 
     void receive(const CollisionEvent& ce) {
-        std::cout << "rofl" << std::endl;
+        // std::cout << "rofl" << std::endl;
         if(ce.m_first.has_component<Player>()) {
-            std::cout << "lol" << std::endl;
+            // std::cout << "lol" << std::endl;
         }
     }
 };

@@ -84,13 +84,29 @@ int Game::init() {
 
     m_res_manager.load_texture("gradient", "res/gradient.png", m_render);
     m_res_manager.load_texture("block", "res/gj-block.png", m_render);
-    m_res_manager.load_texture("trash", "res/mock-trash.png", m_render);
+    m_res_manager.load_texture("water", "res/water.png", m_render);
+    m_res_manager.load_texture("wave", "res/wave.png", m_render);
     m_res_manager.load_texture("jonny", "res/jonny8frames.png", m_render);
+    m_res_manager.load_texture("heli", "res/trump_heli.png", m_render);
+
+
     m_res_manager.load_texture("bg01", "res/bg/01.png", m_render);
     m_res_manager.load_texture("bg02", "res/bg/02.png", m_render);
     m_res_manager.load_texture("bg03", "res/bg/03.png", m_render);
     m_res_manager.load_texture("bg04", "res/bg/04.png", m_render);
-    m_res_manager.load_font("font20", "res/DejaVuSans.ttf", 20);
+
+    m_res_manager.load_texture("trash01", "res/trash/01.png", m_render);
+    m_res_manager.load_texture("trash02", "res/trash/02.png", m_render);
+    m_res_manager.load_texture("trash03", "res/trash/03.png", m_render);
+    m_res_manager.load_texture("trash04", "res/trash/04.png", m_render);
+    m_res_manager.load_texture("trash05", "res/trash/05.png", m_render);
+    m_res_manager.load_texture("trash06", "res/trash/06.png", m_render);
+    m_res_manager.load_texture("trash07", "res/trash/07.png", m_render);
+    m_res_manager.load_texture("trash08", "res/trash/08.png", m_render);
+    m_res_manager.load_texture("trash09", "res/trash/09.png", m_render);
+
+    m_res_manager.load_font("font-big", "res/DejaVuSans.ttf", 40);
+    m_res_manager.load_font("font-small", "res/DejaVuSans.ttf", 30);
 
     SDL_RenderSetLogicalSize(m_render, WIDTH, HEIGHT);
 

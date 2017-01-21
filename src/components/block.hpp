@@ -4,8 +4,14 @@
 #include "entityx/entityx.h"
 #include <iostream>
 
+static int counter = 0;
+
 struct Block : entityx::Component<Block> {
-    Block() {}
+    public:
+        int num;
+        Block() : num(counter++) {
+            
+        }
 };
 
 #endif
