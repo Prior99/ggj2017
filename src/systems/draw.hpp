@@ -50,6 +50,31 @@ class DrawSystem : public entityx::System<DrawSystem> {
         SDL_SetTextureBlendMode(overlayTexture, SDL_BLENDMODE_BLEND);
         SDL_RenderCopy(renderer, overlayTexture, &src, &dest);
 
+        float max = game->absolute_max;
+         float min = game->absolute_min;
+        float current = game->peek_amplitude();
+        float bar_width = WIDTH - 40;
+
+        // Bad rect
+        SDL_Rect rect_schlecht { 20, HEIGHT - 40, (int)bar_width, 20 };
+        SDL_SetRenderDrawColor(renderer, 255, 100, 100, 255);
+        SDL_RenderFillRect(renderer, &rect_schlecht);
+
+        // Good rect
+        SDL_Rect rect_gut { 20 + (int)(min * bar_width), HEIGHT - 40, (int)(bar_width * (max - min)), 20 };
+        SDL_SetRenderDrawColor(renderer, 100, 255, 100, 255);
+        SDL_RenderFillRect(renderer, &rect_gut);
+
+        // Border
+        SDL_Rect rect_outer { 20, HEIGHT - 40, WIDTH - 40, 20 };
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderDrawRect(renderer, &rect_outer);
+
+        // Current rect
+        SDL_Rect rect_inner { (int)((bar_width - 2) * current) + 21, HEIGHT - 40 , 8 , 20 };
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderFillRect(renderer, &rect_inner);
+
         SDL_SetRenderTarget(renderer, nullptr);
         SDL_RenderCopy(renderer, gameTexture, &src, &destScreen);
         SDL_RenderPresent(renderer);
