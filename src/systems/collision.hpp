@@ -19,9 +19,11 @@ class CollisionSystem : public entityx::System<CollisionSystem> {
         entityx::ComponentHandle<Position> first_position, second_position;
         for (entityx::Entity first_entity : es.entities_with_components(first_position)) {
             for (entityx::Entity second_entity : es.entities_with_components(second_position)) {
+                SDL_Rect f_rect = first_position->rect();
+                SDL_Rect s_rect = second_position->rect();
                 if (first_entity != second_entity &&
-                    SDL_HasIntersection(&first_position->rect(), &second_position->rect())) {
-                    events.emit<CollisionEvent>(first_entity, second_entity);
+                    SDL_HasIntersection(&f_rect, &s_rect)) {
+                        events.emit<CollisionEvent>(first_entity, second_entity);
                 }
             }
         }

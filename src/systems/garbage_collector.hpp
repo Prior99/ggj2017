@@ -20,11 +20,11 @@ public:
     void update(entityx::EntityManager& em, entityx::EventManager& events, double dt) {
         auto player = game->get_player();
         auto player_position = player.component<Position>();
-        float player_x = player_position->get_x();
+        float player_x = player_position->position.x;
 
         entityx::ComponentHandle<Position> position;
         for (entityx::Entity first_entity : em.entities_with_components(position)) {
-            if(position->get_x() < player_x - DESPAWN_OFFSET) {
+            if(position->position.x < player_x - DESPAWN_OFFSET) {
                 first_entity.destroy();
             }
         }

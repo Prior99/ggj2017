@@ -4,7 +4,6 @@
 #include "game.hpp"
 
 #include "components/drawable.hpp"
-#include "components/multipartDrawable.hpp"
 #include "components/position.hpp"
 #include "components/uniMultiDrawable.hpp"
 #include "components/overlay.hpp"
@@ -33,52 +32,6 @@ class EntityDrawSystem {
         SDL_DestroyTexture(entityTexture);
     }
 
-    static void renderMultiPart(Game* game, entityx::Entity entity, glm::vec2 offset) {
-        entityx::ComponentHandle<Position> position = entity.component<Position>();
-        entityx::ComponentHandle<MultipartDrawable> multipartDrawable = entity.component<MultipartDrawable>();
-
-        auto pos = position->position() - offset;
-        SDL_Rect dest{pos.x, pos.y, multipartDrawable->getWidth(), 0};
-        SDL_Rect src{0, 0, multipartDrawable->getWidth(), 0};
-
-        PartialDrawable top = multipartDrawable->getTop();
-        if(top.animation.initialized()) {
-            top.animation.getAnimationFrame(&src);
-        } else {
-            src = {0, 0, multipartDrawable->getWidth(), top.height};
-        }
-        dest.h = top.height;
-        SDL_RenderCopy(game->renderer(), game->res_manager().texture(top.texture), &src, &dest);
-
-        dest.y += top.height;
-        PartialDrawable middle = multipartDrawable->getMiddle();
-        if(middle.animation.initialized()) {
-            middle.animation.getAnimationFrame(&src);
-        } else {
-            src = {0, 0, multipartDrawable->getWidth(), middle.height};
-        }
-        dest.h = middle.height;
-        for(int i = 0; i < (int) multipartDrawable->getRepeat(); i++) {
-            SDL_RenderCopy(game->renderer(), game->res_manager().texture(middle.texture), &src, &dest);
-            dest.y += middle.height;
-        }
-        if(compareDoubles(multipartDrawable->getRepeat(), (int) multipartDrawable->getRepeat()) != 0) {
-            auto fractRepeat = multipartDrawable->getRepeat() - (int) multipartDrawable->getRepeat();
-            src.h = fractRepeat * middle.height;
-            dest.h = src.h;
-            SDL_RenderCopy(game->renderer(), game->res_manager().texture(middle.texture), &src, &dest);
-            dest.y += src.h;
-        }
-        PartialDrawable bottom = multipartDrawable->getBottom();
-        if(bottom.animation.initialized()) {
-            bottom.animation.getAnimationFrame(&src);
-        } else {
-            src = {0, 0, multipartDrawable->getWidth(), bottom.height};
-        }
-        dest.h = bottom.height;
-        SDL_RenderCopy(game->renderer(), game->res_manager().texture(bottom.texture), &src, &dest);
-    }
-
     static void renderRow(Game* game, glm::vec2 startPos, SDL_Texture* texture, int reps, SDL_Rect* leftClip, SDL_Rect* centerClip, SDL_Rect* rightClip) {
         SDL_Rect leftDest{startPos.x, startPos.y, leftClip->w, leftClip->h};
         SDL_RenderCopy(game->renderer(), texture, leftClip, &leftDest);
@@ -100,7 +53,7 @@ class EntityDrawSystem {
         auto texture = game->res_manager().texture(drawable->getTexture());
         glm::vec2 reps = drawable->getRepititions();
 
-        auto pos = position->position() - offset;
+        auto pos = position->position - offset;
 
         SDL_Rect leftClip, rightClip, centerClip;
 
@@ -115,22 +68,27 @@ class EntityDrawSystem {
         renderRow(game, bottomPos, texture, reps.x, drawable->getLeftBottomClip(&leftClip), drawable->getCenterBottomClip(&centerClip), drawable->getRightBottomClip(&rightClip));
     }
 
-    static void renderSinglePart(Game* game, entityx::Entity entity, glm::vec2 offset) {
+    static void renderSinglePart(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
         entityx::ComponentHandle<Position> position = entity.component<Position>();
         entityx::ComponentHandle<Drawable> drawable = entity.component<Drawable>();
 
-        auto pos = position->position() - offset;
+        auto pos = position->position - offset;
         SDL_Rect dest{pos.x, pos.y, drawable->getWidth(), drawable->getHeight()};
         SDL_Rect src{0, 0, drawable->getWidth(), drawable->getHeight()};
-
-        SDL_Texture* texture = game->res_manager().texture(drawable->texture_key());
         SDL_Rect *clip = &src;
+
+        SDL_Texture* texture;
         if(drawable->hasAnimation()){
             auto& animation = drawable->getAnimation();
             //if(animation.initialized() && animation.isRunning()) {
                 texture = game->res_manager().texture(animation.getTextureKey());
                 clip = animation.getAnimationFrame(clip);
+                animation.update(dt);
             //}
+        }
+        else
+        {
+            texture = game->res_manager().texture(drawable->texture_key());
         }
         SDL_RenderCopy(game->renderer(), texture, clip, &dest);
     }
@@ -139,7 +97,7 @@ class EntityDrawSystem {
         entityx::ComponentHandle<Position> position = entity.component<Position>();
         entityx::ComponentHandle<StackedDrawable> drawable = entity.component<StackedDrawable>();
 
-        auto pos = position->position() - offset;
+        auto pos = position->position - offset;
         std::vector<Drawable> layers = drawable->getLayers();
 
         for(Drawable layer: layers) {
@@ -158,10 +116,8 @@ class EntityDrawSystem {
     }
 
     static void renderEntity(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
-        if(entity.component<MultipartDrawable>()) {
-            renderMultiPart(game, entity, offset);
-        } else if (entity.component<Drawable>()) {
-            renderSinglePart(game, entity, offset);
+        if (entity.component<Drawable>()) {
+            renderSinglePart(game, entity, offset, dt);
         } else if (entity.component<UniMultipartDrawable>()) {
             renderUniMultiPart(game, entity, offset);
         } else if(entity.component<StackedDrawable>()) {
@@ -173,7 +129,7 @@ class EntityDrawSystem {
                 entityx::TimeDelta dt) {
         auto player = game->get_player();
         auto position = player.component<Position>();
-        glm::vec2 offset = glm::vec2(position->get_x(), 0.0);
+        glm::vec2 offset = glm::vec2(position->position.x, 0.0);
 
         // Change to render into rendertexture for now
         SDL_SetRenderTarget(game->renderer(), entityTexture);

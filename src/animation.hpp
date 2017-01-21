@@ -2,9 +2,7 @@
 #define ANIMATION_HPP
 
 #include <glm/vec2.hpp>
-
 #include <SDL2/SDL.h>
-
 #include <iostream>
 
 enum struct AnimationPlaybackType {
@@ -25,22 +23,20 @@ struct Animation {
         frames(0),
         duration(0),
         size({0, 0}),
-        runTime(0) {
-    }
+        runTime(0)
+    {}
 
     Animation(int offset, int frames, double duration, glm::vec2 size):
         offset(offset),
         frames(frames),
         duration(duration),
         size(size),
-        runTime(0.0) {
-        }
+        runTime(0.0)
+    {}
 };
 
 struct AnimationCollection {
-    AnimationCollection(std::string textureKey): textureKey(textureKey) {
-
-    }
+    AnimationCollection(std::string textureKey): textureKey(textureKey) {}
 
     void addAnimation(std::string animationKey, int offset, int frames, double duration, glm::vec2 size) {
         animations[animationKey] = new Animation(offset, frames, duration, size);

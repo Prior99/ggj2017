@@ -39,7 +39,7 @@ class ControlSystem : public entityx::System<ControlSystem> {
                 }
                 if (x != 0.0f || y != 0.0f) {
                     glm::vec2 delta(y, x);
-                    position->set_position(position->position() + delta);
+                    position->position += delta;
 
                 }
             }

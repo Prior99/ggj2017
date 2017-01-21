@@ -7,40 +7,14 @@
 
 struct Position : entityx::Component<Position> {
 public:
+    glm::vec2 position;
+    glm::vec2 size;
     Position(glm::vec2 new_position = glm::vec2(0.0f, 0.0f), int width = 0, int height = 0)
-        : m_position(new_position),
-          m_rect{int(new_position.x), int(new_position.y), width, height} {
-    }
+        : position(new_position), size({width, height}) {}
 
-    float get_x() {
-        return m_position.x;
+    SDL_Rect rect() {
+        return SDL_Rect {(int)position.x, (int)position.y, (int)size.x, (int)size.y};
     }
-
-    void set_y(float y) {
-        m_position = glm::vec2(m_position.x, y);
-    }
-
-    float get_y() {
-        return m_position.y;
-    }
-
-    glm::vec2 position() {
-        return m_position;
-    }
-
-    SDL_Rect &rect() {
-        return m_rect;
-    }
-
-    void set_position(glm::vec2 new_position) {
-        m_position = new_position;
-        m_rect.x = new_position.x;
-        m_rect.y = new_position.y;
-    }
-
-private:
-    glm::vec2 m_position;
-    SDL_Rect m_rect;
 };
 
 #endif

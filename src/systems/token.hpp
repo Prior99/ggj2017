@@ -31,9 +31,9 @@ public:
         entityx::ComponentHandle<Position> position;
         for(entityx::Entity e: entities.entities_with_components(collectable, position)) {
             (void) e;
-            glm::vec2 pos = position->position();
+            glm::vec2 pos = position->position;
             if(pos.y < collectable->get_height()) {
-                position->set_position(glm::vec2(pos.x, pos.y + DROP_SPEED * dt));
+                position->position = glm::vec2(pos.x, pos.y + DROP_SPEED * dt);
             }
         }
 
@@ -41,7 +41,7 @@ public:
         if (local_dt > 0.3) {
             local_dt = 0;
 
-            float player_x = game->get_player().component<Position>()->position().x;
+            float player_x = game->get_player().component<Position>()->position.x;
             float y = std::rand()/(float)RAND_MAX * HEIGHT/COLLECTABLE_BAND + PROTECTED_TOP;
     		spawn_collectable(entities, player_x + WIDTH - 50, PROTECTED_TOP, y);
         }
