@@ -18,12 +18,14 @@
 #include "../spawners.hpp"
 
 #define BLOCK_SIZE 40
+#define MAX_CHANGE 15
 
 class MapSystem : public entityx::System<MapSystem> {
 private:
     Game *game;
     entityx::TimeDelta local_dt;
     float left_border_position;
+    float last_height = HEIGHT / 2.0f;
 public:
     MapSystem(Game *game): game(game), local_dt(0), left_border_position(0.0) {}
 
@@ -35,28 +37,24 @@ public:
         auto mid_position = player_position->get_x() + WAVE_GENERATOR_X;
         entityx::ComponentHandle<Block> block;
         entityx::ComponentHandle<Position> position;
-        auto height = this->game->take_amplitude() - 0.5f;
-        height *= MAX_BLOCK_HEIGHT;
+        float band = HEIGHT * MAX_BLOCK_HEIGHT;
+        float lower_offset = (HEIGHT - band) / 2.0f;
+        float amplitude = this->game->take_amplitude();
+        float inverted_height = lower_offset + amplitude * band;
+        float height = HEIGHT - inverted_height;
+        // std::cout << (last_height - MAX_CHANGE) << " < " << height << " < " << (last_height + MAX_CHANGE) << std::endl;
+        height = glm::clamp(height, last_height - MAX_CHANGE, last_height + MAX_CHANGE);
+        this->last_height = height;
         for (auto entity: entities.entities_with_components(block, position)) {
-            std::cout << "height: " << height;
             (void) entity;
-            float x = glm::abs(position->get_x() - mid_position);
-            auto influence = (glm::cos(x * 2.0f * glm::pi<float>() / WIDTH) + 1.0f)/2.0f;
-            influence *= 0.5;
-            if (position->get_x() < mid_position - 200) {
-                influence *= 0.1;
-            }
-            if (glm::abs(position->get_y() - HEIGHT /2) < HEIGHT * MAX_BLOCK_HEIGHT * 0.5f) {
-                float y;
-                std::cout << " influence:" << influence;
-                if (position->get_x() < mid_position - 50) {
-                    y = position->get_y() - influence * height * HEIGHT / 2.0f;
-                } else {
-                    y = HEIGHT/2.0f - influence * height * HEIGHT / 2.0f;
-                }
-                std::cout << " y:" << y;
-                position->set_position(glm::vec2(position->get_x(), y));
-                std::cout << std::endl;
+            auto x = position->get_x();
+            if (x > mid_position) {
+                float amplitude = height - HEIGHT / 2;
+                float distance_to_mid = x - mid_position;
+                float max_distance = WIDTH / 2;
+                float pi = glm::pi<float>();
+                float y = glm::sin((distance_to_mid / max_distance) * pi - pi) * amplitude + height;
+                position->set_y(y);
             }
         }
     }

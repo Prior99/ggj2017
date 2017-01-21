@@ -107,7 +107,7 @@ void Game::tick_audio() {
     int error;
     pa_simple_read(this->pa, this->data, len * 4, &error);
     pa_simple_flush(this->pa, &error);
-    std::cout << "Latency " << (int)pa_simple_get_latency(this->pa, &error) << std::endl;
+    // std::cout << "Latency " << (int)pa_simple_get_latency(this->pa, &error) << std::endl;
 
     float avg = 0;
     for (int i = 0; i < len; ++i) {
