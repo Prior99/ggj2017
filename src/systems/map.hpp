@@ -66,15 +66,22 @@ public:
         }
     }
 
+    static float mix(float l, float r, float p, float l_v, float r_v) {
+        float dist = r - l;
+        float fac_left = (r - p) / dist;
+        float fac_right = 1.0 - fac_left;
+        return fac_left * l_v + fac_right * r_v;
+    }
+
     void move_it(entityx::EntityManager& entities) {
         auto player = game->get_player();
         auto player_position = player.component<Position>();
         auto player_x = player_position->position.x;
 
-        float closest_left = - 1.0/0.0;
-        entityx::Entity left_block;
-        float closest_right = 1.0/0.0;
-        entityx::Entity right_block;
+        entityx::Entity closest[3];
+        float distances[3];
+        for(int i=0; i<3; i++)
+            distances[i] = 1.0/0.0;
 
         entityx::ComponentHandle<Block> block;
         entityx::ComponentHandle<Position> position;
@@ -83,24 +90,69 @@ public:
         for (auto entity: entities.entities_with_components(block, position))
         {
             auto x = position->position.x;
-            if (x >= player_x && x < closest_right) {
-                right_block = entity;
-                closest_right = x;
-            }
-            if (x < player_x && x > closest_left) {
-                left_block = entity;
-                closest_left = x;
+            float dist = glm::abs(x-player_x);
+            for(int i=0; i<3; i++)
+            {
+                if(dist < distances[i])
+                {
+                    for(int j=1; j>=i; j--)
+                    {
+                        closest[j+1] = closest[j];
+                        distances[j+1] = distances[j];
+                    }
+
+                    closest[i] = entity;
+                    distances[i] = dist;
+                    break;
+                }
             }
         }
 
-        float left_height = left_block.component<Position>()->position.y;
-        float right_height = right_block.component<Position>()->position.y;
+        entityx::Entity left;
+        float left_pos = 1.0/0.0;
+        entityx::Entity center;
+        entityx::Entity right;
+        float right_pos = -1.0/0.0;
 
-        float dist = closest_right - closest_left;
-        float fac_left = (closest_right- player_x) / dist;
-        float fac_right = 1.0 - fac_left;
+        for(int i=0; i<3; i++)
+        {
+            float pos = closest[i].component<Position>()->position.x;
+            if(pos < left_pos)
+            {
+                left = closest[i];
+                left_pos = pos;
+            }
+        }
+        for(int i=0; i<3; i++)
+        {
+            float pos = closest[i].component<Position>()->position.x;
+            if(pos > right_pos)
+            {
+                right = closest[i];
+                right_pos = pos;
+            }
+        }
 
-        player_position->position.y = left_height*fac_left + right_height*fac_right;
+        for(int i=0; i<3; i++)
+        {
+            if(closest[i] != left && closest[i] != right)
+            {
+                center = closest[i];
+                break;
+            }
+        }
+
+        auto left_position = left.component<Position>();
+        auto center_position = center.component<Position>();
+        auto right_position = right.component<Position>();
+
+        float l_border = (left_position->position.x + center_position->position.x) / 2.0;
+        float r_border = l_border + BLOCK_WIDTH;
+        float l_val = (left_position->position.y + center_position->position.y) / 2.0;
+        float r_val = (right_position->position.y + center_position->position.y) / 2.0;
+
+        float p_height = mix(l_border, r_border, player_x, l_val, r_val);
+        player_position->position.y = p_height;
     }
 
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {

@@ -33,7 +33,6 @@ class BackgroundDrawSystem {
             int width, height;
             SDL_QueryTexture(tex, nullptr, nullptr, &width, &height);
             int x = (int)(position.x / parallaxity_x) % width;
-            std::cout << x <<std::endl;
             SDL_Rect dest1 {-x, -(height - HEIGHT) / 2, width, height};
             SDL_Rect dest2 {-x + width, -(height - HEIGHT) / 2, width, height};
 
