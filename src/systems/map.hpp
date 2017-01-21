@@ -155,7 +155,14 @@ public:
 
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
         auto player = game->get_player();
+        auto player_comp = player.component<Player>();
         auto position = player.component<Position>();
+
+        if(player_comp->game_over) {
+            player_comp->vel += glm::vec2(0.0,-1.0);
+            position->position += player_comp->vel;
+        }
+
         float new_player_x = position->position.x + PLAYER_SPEED;
         position->position = glm::vec2(new_player_x, position->position.y);
 

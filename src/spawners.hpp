@@ -48,8 +48,9 @@ entityx::Entity spawn_player(entityx::EntityManager& entities) {
 
 void spawn_wall(entityx::EntityManager& entities, float position) {
     entityx::Entity wall = entities.create();
-    wall.assign<Drawable>("block", BLOCK_WIDTH, BLOCK_HEIGHT);
-    wall.assign<Position>(glm::vec2(position, HEIGHT/2.0));
+    wall.assign<Drawable>("wall", 160, 732);
+    // TODO make random
+    wall.assign<Position>(glm::vec2(position, HEIGHT/2.0), 160, 732);
     wall.assign<Wall>();
 }
 

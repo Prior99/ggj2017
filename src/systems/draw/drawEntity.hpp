@@ -48,28 +48,6 @@ class EntityDrawSystem {
         SDL_RenderCopy(game->renderer(), texture, rightClip, &rightDest);
     }
 
-    static void renderUniMultiPart(Game* game, entityx::Entity entity, glm::vec2 offset) {
-        entityx::ComponentHandle<Position> position = entity.component<Position>();
-        entityx::ComponentHandle<UniMultipartDrawable> drawable = entity.component<UniMultipartDrawable>();
-
-        auto texture = game->res_manager().texture(drawable->getTexture());
-        glm::vec2 reps = drawable->getRepititions();
-
-        auto pos = position->position - offset;
-
-        SDL_Rect leftClip, rightClip, centerClip;
-
-        renderRow(game, pos, texture, reps.x, drawable->getLeftTopClip(&leftClip), drawable->getCenterTopClip(&centerClip), drawable->getRightTopClip(&rightClip));
-
-        for(int row = 0; row < reps.y; row++) {
-            auto newPos = pos + glm::vec2(0, drawable->getTop() + row * drawable->getCenterY());
-            renderRow(game, newPos, texture, reps.x, drawable->getLeftCenterClip(&leftClip), drawable->getCenterClip(&centerClip), drawable->getRightCenterClip(&rightClip));
-        }
-
-        auto bottomPos = pos + glm::vec2(0, drawable->getTop() + reps.y * drawable->getCenterY());
-        renderRow(game, bottomPos, texture, reps.x, drawable->getLeftBottomClip(&leftClip), drawable->getCenterBottomClip(&centerClip), drawable->getRightBottomClip(&rightClip));
-    }
-
     static void renderSinglePart(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
         entityx::ComponentHandle<Position> position = entity.component<Position>();
         entityx::ComponentHandle<Drawable> drawable = entity.component<Drawable>();
@@ -82,10 +60,8 @@ class EntityDrawSystem {
         SDL_Texture* texture;
         if(drawable->hasAnimation()){
             auto& animation = drawable->getAnimation();
-            //if(animation.initialized() && animation.isRunning()) {
-                texture = game->res_manager().texture(animation.getTextureKey());
-                clip = animation.getAnimationFrame(clip);
-            //}
+            texture = game->res_manager().texture(animation.getTextureKey());
+            clip = animation.getAnimationFrame(clip);
         }
         else
         {
@@ -133,22 +109,16 @@ class EntityDrawSystem {
         SDL_Rect src{pos.x + off, pos.y, drawable->getWidth(), HEIGHT - pos.y};
 
         SDL_RenderCopy(game->renderer(), texture, &src, &dest);
-        //if (pos.x < WIDTH * 0.8) {
-            auto die_gischt_textur = game->res_manager().texture("wave");
-            int gischt_width, gischt_height;
-            SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-            int animstep;
-            //if (pos.x > WIDTH * 0.6)  {
-                animstep = ((int)playerpos.x / 50 + block->num) % 4;
-            //} else {
-            //    animstep = 4;
-            //}
 
-            SDL_Rect dest_von_die_gischt{pos.x, pos.y - 20, 50, 36};
-            SDL_Rect src_von_die_gischt{50 * animstep, 0, 50, 36};
+        auto die_gischt_textur = game->res_manager().texture("wave");
+        int gischt_width, gischt_height;
+        SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+        int animstep = ((int)playerpos.x / 50 + block->num) % 4;
 
-            SDL_RenderCopy(game->renderer(), die_gischt_textur, &src_von_die_gischt, &dest_von_die_gischt);
-        //}
+        SDL_Rect dest_von_die_gischt{pos.x, pos.y - 20, 50, 36};
+        SDL_Rect src_von_die_gischt{50 * animstep, 0, 50, 36};
+
+        SDL_RenderCopy(game->renderer(), die_gischt_textur, &src_von_die_gischt, &dest_von_die_gischt);
     }
 
     static void renderEntity(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
@@ -156,10 +126,6 @@ class EntityDrawSystem {
             renderBlock(game, entity, offset, dt);
         } else if (entity.component<Drawable>()) {
             renderSinglePart(game, entity, offset, dt);
-        } else if (entity.component<UniMultipartDrawable>()) {
-            renderUniMultiPart(game, entity, offset);
-        } else if(entity.component<StackedDrawable>()) {
-            renderStacked(game, entity, offset);
         } else if(entity.component<GameText>()) {
             renderText(game, entity, offset, dt);
         }
