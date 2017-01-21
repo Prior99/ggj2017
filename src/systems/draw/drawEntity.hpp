@@ -133,22 +133,22 @@ class EntityDrawSystem {
         SDL_Rect src{pos.x + off, pos.y, drawable->getWidth(), HEIGHT - pos.y};
 
         SDL_RenderCopy(game->renderer(), texture, &src, &dest);
-        if (pos.x < WIDTH * 0.8) {
+        //if (pos.x < WIDTH * 0.8) {
             auto die_gischt_textur = game->res_manager().texture("wave");
             int gischt_width, gischt_height;
             SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
             int animstep;
-            if (pos.x > WIDTH * 0.6)  {
-                animstep = ((int)playerpos.x / 50 + block->num) % 7;
-            } else {
-                animstep = 6;
-            }
+            //if (pos.x > WIDTH * 0.6)  {
+                animstep = ((int)playerpos.x / 50 + block->num) % 4;
+            //} else {
+            //    animstep = 4;
+            //}
 
-            SDL_Rect dest_von_die_gischt{pos.x - 15, pos.y - 20, 70, 33};
-            SDL_Rect src_von_die_gischt{70 * animstep, 0, 70, 33};
+            SDL_Rect dest_von_die_gischt{pos.x, pos.y - 20, 50, 36};
+            SDL_Rect src_von_die_gischt{50 * animstep, 0, 50, 36};
 
             SDL_RenderCopy(game->renderer(), die_gischt_textur, &src_von_die_gischt, &dest_von_die_gischt);
-        }
+        //}
     }
 
     static void renderEntity(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
