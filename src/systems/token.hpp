@@ -21,10 +21,22 @@ class TokenSystem : public entityx::System<TokenSystem> {
 private:
     Game *game;
     entityx::TimeDelta local_dt;
+    entityx::Entity heli;
+    float heli_x;
 public:
     TokenSystem(Game *game): game(game), local_dt(0) {
 		std::srand(time(nullptr));
 	}
+
+    void configure(entityx::EntityManager& entities, entityx::EventManager& events) override {
+        heli_x = WIDTH - 240 - 20;
+        heli = entities.create();
+        heli.assign<Position>(glm::vec2(heli_x, PROTECTED_TOP - 110));
+        AnimationCollection heliAnimation = AnimationCollection("heli");
+        heliAnimation.addAnimation("animate", 0, 3, 0.3, glm::vec2(240, 100));
+        heliAnimation.setAnimation("animate", AnimationPlaybackType::LOOP);
+        heli.assign<Drawable>("heli", 240, 100, heliAnimation);
+    }
 
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
         entityx::ComponentHandle<Collectable> collectable;
@@ -37,14 +49,16 @@ public:
             }
         }
 
+        float player_x = game->get_player().component<Position>()->position.x;
+        heli.component<Position>()->position.x = player_x + heli_x - PLAYER_OFFSET;
+
         local_dt += dt;
         double currentSpawnPeriod = TOKEN_SPAWN_PERIOD - TOKEN_SPAWN_VARIATION + std::rand()/(float)RAND_MAX * 2 * TOKEN_SPAWN_VARIATION;
         if (local_dt > currentSpawnPeriod) {
             local_dt = 0;
 
-            float player_x = game->get_player().component<Position>()->position.x;
             float y = std::rand()/(float)RAND_MAX * HEIGHT/COLLECTABLE_BAND + PROTECTED_TOP;
-    		spawn_collectable(entities, player_x + WIDTH - 50, PROTECTED_TOP, y);
+    		spawn_collectable(entities, player_x + WIDTH - 150 - PLAYER_OFFSET, PROTECTED_TOP, y, (int)(std::rand()/(float)RAND_MAX * 8 + 1));
         }
     }
 };
