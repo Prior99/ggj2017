@@ -30,7 +30,7 @@ class CollisionSystem : public entityx::System<CollisionSystem> {
             for (entityx::Entity garbage : es.entities_with_components(garbage_pos, collectable)) {
                 (void) player;
                 float distance = glm::length(player_pos->position - garbage_pos->position);
-                if (distance < 80) {
+                if (distance < 100) {
                     garbage.destroy();
                     state->cash();
                 }
