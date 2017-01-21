@@ -32,6 +32,7 @@ class Game {
     bool init_audio();
     void tick_audio();
     float take_amplitude();
+    float peek_amplitude();
     std::stack<std::pair<std::string, std::unique_ptr<State>>> &states();
     const std::string &statename() const;
 
@@ -39,13 +40,13 @@ class Game {
     ResourceManager &res_manager();
     SDL_Window *window();
     const SDL_Rect &world_size() const;
+    float absolute_max = 0.6f;
+    float absolute_min = 0.4f;
 
   private:
     bool m_running = true;
     int m_last_frame_time = 0;
     float *data;
-    float absolute_max = 0.0f;
-    float absolute_min = 0.0f;
     std::vector<float> amplitudes;
     SDL_Rect m_world_size = {0, 0, 1600, 1200};
 
