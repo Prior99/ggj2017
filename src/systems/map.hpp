@@ -27,6 +27,8 @@ private:
     Game *game;
     entityx::TimeDelta local_dt;
     float last_block_spawned_at;
+    float last_wall_spawned_at = 1700.0;
+    float random_wall_offset = 0.0;
     float last_height = HEIGHT / 2.0f;
     float WAVE_GENERATOR_X = WIDTH * 0.4;
 public:
@@ -161,6 +163,14 @@ public:
             last_block_spawned_at += BLOCK_WIDTH;
             spawn_block(entities, last_block_spawned_at);
         }
+
+        if(new_player_x > last_wall_spawned_at + WALL_SPAWN_OFFSET + random_wall_offset)
+        {
+            last_wall_spawned_at = new_player_x + BLOCK_SPAWN_OFFSET;
+            random_wall_offset = (float)(rand() % RAND_WALL_BAND);
+            spawn_wall(entities, last_wall_spawned_at);
+        }
+
         this->wave_it(entities);
         this->move_it(entities);
     }

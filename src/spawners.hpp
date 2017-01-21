@@ -46,10 +46,10 @@ entityx::Entity spawn_player(entityx::EntityManager& entities) {
     return player;
 }
 
-void spawn_wall(entityx::EntityManager& entities) {
+void spawn_wall(entityx::EntityManager& entities, float position) {
     entityx::Entity wall = entities.create();
     wall.assign<Drawable>("block", BLOCK_WIDTH, BLOCK_HEIGHT);
-    wall.assign<Position>(glm::vec2(300.f, 400.f), 100, 146);
+    wall.assign<Position>(glm::vec2(position, HEIGHT/2.0));
     wall.assign<Wall>();
 }
 
