@@ -36,6 +36,13 @@ static const float MAX_SPAWN_DISTANCE = 150;
 
 static const float TEXT_DURATION = 2.0f;
 
+
+static const int MERMAID_WIDTH = 126;
+static const int MERMAID_HEIGHT = 128;
+static const int MERMAID_MOVE_MAX = 20;
+static const int MERMAID_SCREEN_POS_Y = MERMAID_MOVE_MAX;
+static const int MERMAID_SCREEN_POS_X = WIDTH - MERMAID_WIDTH - MERMAID_MOVE_MAX;
+
 static const int HELI_WIDTH = 240;
 static const int HELI_HEIGHT = 100;
 static const int HELI_MOVE_MAX = 20;

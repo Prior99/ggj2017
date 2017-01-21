@@ -63,20 +63,21 @@ void spawn_wall(entityx::EntityManager& entities, float position) {
     wall.assign<Wall>();
 }
 
-void spawn_mermaid(entityx::EntityManager& entities) {
+entityx::Entity spawn_mermaid(entityx::EntityManager& entities) {
     entityx::Entity mermaid = entities.create();
-    auto merm_pos = glm::vec2(PLAYER_OFFSET + WAVE_GENERATOR_X + 0.5 * BLOCK_WIDTH - 82, HEIGHT - 127 - 60);
-    mermaid.assign<Position>(merm_pos);
+    mermaid.assign<Position>(glm::vec2(0.0, 0.0));
     AnimationCollection mermaidAnimation = AnimationCollection("mermaid");
-    mermaidAnimation.addAnimation("move", 0, 7, 1.5, glm::vec2(125, 127));
+    auto merm_size = glm::vec2(MERMAID_WIDTH, MERMAID_HEIGHT);
+    mermaidAnimation.addAnimation("move", 0, 7, 1.5, merm_size);
     mermaidAnimation.setAnimation("move", AnimationPlaybackType::LOOP);
-    mermaid.assign<Drawable>("mermaid", 125, 127, mermaidAnimation);
+    mermaid.assign<Drawable>("mermaid", MERMAID_WIDTH, MERMAID_HEIGHT, mermaidAnimation);
     mermaid.assign<Overlay>();
+    return mermaid;
 }
 
 entityx::Entity spawn_heli(entityx::EntityManager& entities) {
     entityx::Entity heli = entities.create();
-    heli.assign<Position>(glm::vec2(HELI_SCREEN_POS_X, HELI_SCREEN_POS_Y));
+    heli.assign<Position>(glm::vec2(0.0, 0.0));
     AnimationCollection heliAnimation = AnimationCollection("heli");
     heliAnimation.addAnimation("animate", 0, 3, 0.3, glm::vec2(HELI_WIDTH, HELI_HEIGHT));
     heliAnimation.setAnimation("animate", AnimationPlaybackType::LOOP);

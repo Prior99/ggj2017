@@ -21,6 +21,8 @@ private:
     Game *game;
     entityx::TimeDelta local_dt;
     entityx::Entity heli;
+    entityx::Entity mermaid;
+
     float total_time;
     float last_spawn_y;
 public:
@@ -30,6 +32,23 @@ public:
 
     void configure(entityx::EntityManager& entities, entityx::EventManager& events) override {
         heli = spawn_heli(entities);
+        mermaid = spawn_mermaid(entities);
+    }
+
+    void update_heli(float player_x) {
+        float x_offset = HELI_MOVE_MAX * glm::sin(total_time / 1.234);
+        float y_offset = HELI_MOVE_MAX * glm::cos(total_time / 0.735);
+        float x = player_x - PLAYER_OFFSET + HELI_SCREEN_POS_X + x_offset;
+        float y = HELI_SCREEN_POS_Y + y_offset;
+        heli.component<Position>()->position = glm::vec2(x, y);
+    }
+
+    void update_mermaid(float player_x) {
+        float x_offset = HELI_MOVE_MAX * glm::sin(total_time / 0.9434);
+        float y_offset = HELI_MOVE_MAX * glm::cos(total_time / 1.7435);
+        float x = PLAYER_OFFSET + WAVE_GENERATOR_X - MERMAID_WIDTH / 2.0 + x_offset;
+        float y = HEIGHT - MERMAID_HEIGHT - 60 + y_offset;
+        mermaid.component<Position>()->position = glm::vec2(x, y);
     }
 
     void normal_update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
@@ -44,12 +63,8 @@ public:
         }
 
         float player_x = game->get_player().component<Position>()->position.x;
-
-        float x_offset = HELI_MOVE_MAX * glm::sin(total_time / 1.234);
-        float y_offset = HELI_MOVE_MAX * glm::cos(total_time / 0.735);
-        float new_x = player_x - PLAYER_OFFSET + HELI_SCREEN_POS_X + x_offset;
-        float new_y = HELI_SCREEN_POS_Y + y_offset;
-        heli.component<Position>()->position = glm::vec2(new_x, new_y);
+        update_mermaid(player_x);
+        update_heli(player_x);
 
         local_dt += dt;
         double currentSpawnPeriod = TOKEN_SPAWN_PERIOD - TOKEN_SPAWN_VARIATION + std::rand()/(float)RAND_MAX * 2 * TOKEN_SPAWN_VARIATION;
@@ -72,8 +87,19 @@ public:
 
         entityx::ComponentHandle<Decay> decay;
         for(entityx::Entity e: entities.entities_with_components(decay)) {
-            if((decay->dt += dt) > 3.0) {
+            if((decay->dt += dt) > decay->timeout) {
                 e.destroy();
+            }
+        }
+
+        if(mermaid.valid()) {
+            if(!mermaid.has_component<Decay>()) {
+                mermaid.assign<Decay>(3.0f);
+            }
+        }
+        if(heli.valid()) {
+            if(!heli.has_component<Decay>()) {
+                heli.assign<Decay>(2.5f);
             }
         }
     }
