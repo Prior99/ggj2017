@@ -2,11 +2,10 @@
 #define GAME_HPP
 
 #include "components/position.hpp"
-
 #include "strapon/state/state.hpp"
 #include "strapon/resource_manager/resource_manager.hpp"
-#include "glm/common.hpp"
 
+#include "glm/common.hpp"
 #include "entityx/entityx.h"
 
 #include <SDL2/SDL.h>

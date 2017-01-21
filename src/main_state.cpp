@@ -21,16 +21,12 @@
 
 #include <SDL2/SDL.h>
 
-MainState::MainState(Game* game) : game(game) {
-}
-
-MainState::~MainState() {
-}
+MainState::MainState(Game* game) : game(game) {}
 
 int MainState::init() {
     m_systems.add<DrawSystem>(game);
     m_systems.add<ControlSystem>();
-    m_systems.add<CollisionSystem>(this);
+    m_systems.add<CollisionSystem>(*this, *game);
     m_systems.add<MapSystem>(game);
     m_systems.add<GarbageCollectionSystem>(game);
     m_systems.add<TokenSystem>(game);
@@ -44,6 +40,9 @@ int MainState::init() {
     highscore.assign<Highscore>();
     highscore.assign<Overlay>();
     highscore.assign<Text>("Score: 0", SDL_Color {14, 255, 14, 255});
+
+    spawn_mermaid(m_entities);
+
     return 0;
 }
 

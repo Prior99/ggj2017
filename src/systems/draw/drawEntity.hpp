@@ -53,8 +53,8 @@ class EntityDrawSystem {
         entityx::ComponentHandle<Drawable> drawable = entity.component<Drawable>();
 
         auto pos = position->position - offset;
-        SDL_Rect dest{pos.x, pos.y, drawable->getWidth(), drawable->getHeight()};
-        SDL_Rect src{0, 0, drawable->getWidth(), drawable->getHeight()};
+        SDL_Rect dest{pos.x, pos.y, drawable->width, drawable->height};
+        SDL_Rect src{0, 0, drawable->width, drawable->height};
         SDL_Rect *clip = &src;
 
         SDL_Texture* texture;
@@ -68,6 +68,11 @@ class EntityDrawSystem {
             texture = game->res_manager().texture(drawable->texture_key());
         }
         SDL_RenderCopy(game->renderer(), texture, clip, &dest);
+
+        if(DEBUG) {
+            SDL_SetRenderDrawColor(game->renderer(), 255, 100, 100, 255);
+            SDL_RenderFillRect(game->renderer(), &dest);
+        }
     }
 
     static void renderStacked(Game* game, entityx::Entity entity, glm::vec2 offset) {
@@ -78,8 +83,8 @@ class EntityDrawSystem {
         std::vector<Drawable> layers = drawable->getLayers();
 
         for(Drawable layer: layers) {
-            SDL_Rect dest{pos.x, pos.y, layer.getWidth(), layer.getHeight()};
-            SDL_Rect src{0, 0, layer.getWidth(), layer.getHeight()};
+            SDL_Rect dest{pos.x, pos.y, layer.width, layer.height};
+            SDL_Rect src{0, 0, layer.width, layer.height};
 
             SDL_Texture* texture = game->res_manager().texture(layer.texture_key());
             SDL_Rect *clip = &src;
@@ -88,7 +93,7 @@ class EntityDrawSystem {
                 texture = game->res_manager().texture(animation.getTextureKey());
                 clip = animation.getAnimationFrame(clip);
             }
-            SDL_RenderCopyEx(game->renderer(), texture, clip, &dest, layer.getRotation(), NULL, SDL_RendererFlip::SDL_FLIP_NONE);
+            SDL_RenderCopyEx(game->renderer(), texture, clip, &dest, layer.rotation, NULL, SDL_RendererFlip::SDL_FLIP_NONE);
         }
     }
 
@@ -105,8 +110,8 @@ class EntityDrawSystem {
         if (off + pos.x + 50 > width) {
             off -= width;
         }
-        SDL_Rect dest{(int)pos.x, (int)pos.y, drawable->getWidth(), HEIGHT - pos.y};
-        SDL_Rect src{pos.x + off, pos.y, drawable->getWidth(), HEIGHT - pos.y};
+        SDL_Rect dest{(int)pos.x, (int)pos.y, drawable->width, HEIGHT - pos.y};
+        SDL_Rect src{pos.x + off, pos.y, drawable->width, HEIGHT - pos.y};
 
         SDL_RenderCopy(game->renderer(), texture, &src, &dest);
 
@@ -161,7 +166,7 @@ class EntityDrawSystem {
         auto progressSize = glm::min(progress * 2, 1.0f);
         int nW = w * progressSize;
         int offsetX = pos.x + (w - nW) / 2;
-        std::cout << "rendertext" << (pos.x + offsetX) << "," << (pos.y - progress * 100) << std::endl;
+        // std::cout << "rendertext" << (pos.x + offsetX) << "," << (pos.y - progress * 100) << std::endl;
         SDL_Rect dest{pos.x + offsetX, pos.y - progress * 100, nW, h * progressSize};
 
         SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
@@ -189,7 +194,7 @@ class EntityDrawSystem {
                 auto privOffset = glm::vec2(0, 0);
                 auto draw = entity.component<Drawable>();
                 if (draw) {
-                    privOffset = draw->getOffset();
+                    privOffset = draw->offset;
                 }
                 renderEntity(game, entity, offset + privOffset, dt);
             }

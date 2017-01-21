@@ -15,14 +15,12 @@
 #include "components/drawable.hpp"
 #include "components/block.hpp"
 
-#include "../events.hpp"
 #include "../spawners.hpp"
 
 #define BLOCK_SIZE 50
 #define MAX_CHANGE 15
 
-class MapSystem : public entityx::System<MapSystem>,
-                  public entityx::Receiver<MapSystem> {
+class MapSystem : public entityx::System<MapSystem> {
 private:
     Game *game;
     entityx::TimeDelta local_dt;
@@ -33,9 +31,6 @@ private:
     float WAVE_GENERATOR_X = WIDTH * 0.4;
 public:
     MapSystem(Game *game): game(game), local_dt(0), last_block_spawned_at(0.0) {}
-    void configure(entityx::EntityManager& entities, entityx::EventManager& events) override {
-        events.subscribe<CollisionEvent>(*this);
-    }
 
     void wave_it(entityx::EntityManager& entities) {
         auto player = game->get_player();
@@ -180,11 +175,6 @@ public:
 
         this->wave_it(entities);
         this->move_it(entities);
-    }
-
-    void receive(const CollisionEvent& ce) {
-        if(ce.m_first.has_component<Player>()) {
-        }
     }
 };
 

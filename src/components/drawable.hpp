@@ -7,49 +7,32 @@
 
 #include <SDL2/SDL.h>
 
-struct Drawable : entityx::Component<Drawable> {
-    Drawable(std::string key, float width, float height, AnimationCollection animation = { "" }, glm::vec2 offset = glm::vec2(0, 0)):
+class Drawable : entityx::Component<Drawable> {
+private:
+    std::string textureKey;
+    AnimationCollection animation;
+
+public:
+    float width;
+    float height;
+    double rotation;
+    glm::vec2 offset;
+
+    Drawable(
+            std::string key,
+            float width,
+            float height,
+            AnimationCollection animation = { "" },
+            glm::vec2 offset = glm::vec2(0, 0)):
         textureKey(key),
-        height(height),
-        width(width),
         animation(animation),
-        offset(offset) {
-    }
-
-    float getHeight() {
-        return height;
-    }
-
-    float getWidth() {
-        return width;
-    }
-
-    void setHeight(float height) {
-        this->height = height;
-    }
-
-    void setWidth(float width) {
-        this->width = width;
-    }
-
-    glm::vec2 getOffset() {
-        return this->offset;
-    }
-
-    void setOffset(glm::vec2 offset) {
-        this->offset = offset;
-    }
+        width(width),
+        height(height),
+        rotation(0.0),
+        offset(offset) {}
 
     std::string texture_key() {
         return textureKey;
-    }
-
-    double getRotation() {
-        return rotation;
-    }
-
-    void setRotation(double r) {
-        this->rotation = r;
     }
 
     bool hasAnimation() {
@@ -59,13 +42,5 @@ struct Drawable : entityx::Component<Drawable> {
     AnimationCollection& getAnimation() {
         return animation;
     }
-
-  private:
-    std::string textureKey;
-    float height;
-    float width;
-    AnimationCollection animation;
-    double rotation;
-    glm::vec2 offset;
 };
 #endif

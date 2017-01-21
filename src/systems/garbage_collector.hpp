@@ -4,7 +4,6 @@
 #include "components/position.hpp"
 #include "components/overlay.hpp"
 #include "components/game-text.hpp"
-#include "events.hpp"
 #include "game.hpp"
 
 #include "entityx/entityx.h"

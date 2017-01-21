@@ -3,7 +3,6 @@
 
 #include "components/position.hpp"
 #include "components/player.hpp"
-#include "events.hpp"
 
 #include "game_config.hpp"
 
