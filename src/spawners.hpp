@@ -12,11 +12,10 @@
 
 #include "game_config.hpp"
 
-void spawn_block(entityx::EntityManager& entities, float position, float height) {
+void spawn_block(entityx::EntityManager& entities, float position) {
     entityx::Entity block = entities.create();
-    float absolute_height = height * MAX_BLOCK_HEIGHT * HEIGHT;
 
-    block.assign<Position>(glm::vec2(position, HEIGHT - absolute_height));
+    block.assign<Position>(glm::vec2(position, HEIGHT/2.0));
     // TODO htf scale the images
     block.assign<Drawable>("block", BLOCK_WIDTH, BLOCK_HEIGHT);
     block.assign<Block>();
