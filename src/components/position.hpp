@@ -16,6 +16,10 @@ public:
         return m_position.x;
     }
 
+    void set_y(float y) {
+        m_position = glm::vec2(m_position.x, y);
+    }
+
     float get_y() {
         return m_position.y;
     }

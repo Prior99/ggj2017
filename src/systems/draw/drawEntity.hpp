@@ -180,7 +180,6 @@ class EntityDrawSystem {
         SDL_SetRenderDrawColor(game->renderer(), 128, 128, 255, 0);
         SDL_RenderClear(game->renderer());
 
-        // std::cout << "sdkasldkajsldkja" << std::endl;
         for (entityx::Entity entity : es.entities_with_components(position)) {
             if(!entity.component<Overlay>()) {
                 auto privOffset = glm::vec2(0, 0);
@@ -188,11 +187,9 @@ class EntityDrawSystem {
                 if (draw) {
                     privOffset = draw->getOffset();
                 }
-                // std::cout << (offset + privOffset).x << std::endl;
                 renderEntity(game, entity, offset + privOffset, dt);
             }
         }
-        // std::cout << "sdkasldkajsldkjaalskdjalskdj" << std::endl;
     }
 
     SDL_Texture *getTexture() {
