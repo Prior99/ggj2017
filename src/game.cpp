@@ -86,6 +86,10 @@ int Game::init() {
     m_res_manager.load_texture("block", "res/gj-block.png", m_render);
     m_res_manager.load_texture("trash", "res/mock-trash.png", m_render);
     m_res_manager.load_texture("jonny", "res/jonny8frames.png", m_render);
+    m_res_manager.load_texture("bg01", "res/bg/01.png", m_render);
+    m_res_manager.load_texture("bg02", "res/bg/02.png", m_render);
+    m_res_manager.load_texture("bg03", "res/bg/03.png", m_render);
+    m_res_manager.load_texture("bg04", "res/bg/04.png", m_render);
     m_res_manager.load_font("font20", "res/DejaVuSans.ttf", 20);
 
     SDL_RenderSetLogicalSize(m_render, WIDTH, HEIGHT);

@@ -5,6 +5,7 @@
 
 #include "systems/draw/drawEntity.hpp"
 #include "systems/draw/drawOverlay.hpp"
+#include "systems/draw/drawBackground.hpp"
 
 #include "strapon/resource_manager/resource_manager.hpp"
 
@@ -17,7 +18,7 @@
 
 class DrawSystem : public entityx::System<DrawSystem> {
   public:
-    DrawSystem(Game *game) : game(game), entityDrawSystem(game), overlayDrawSystem(game) {
+    DrawSystem(Game *game) : game(game), entityDrawSystem(game), backgroundDrawSystem(game), overlayDrawSystem(game) {
         gameTexture = SDL_CreateTexture(
             game->renderer(), SDL_PIXELTYPE_UNKNOWN, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
 
@@ -28,6 +29,7 @@ class DrawSystem : public entityx::System<DrawSystem> {
 
     void update(entityx::EntityManager &es, entityx::EventManager &events, entityx::TimeDelta dt) override {
         entityDrawSystem.update(es, events, dt);
+        backgroundDrawSystem.update(es, events, dt);
         overlayDrawSystem.update(es, events, dt);
         auto src = SDL_Rect{0, 0, WIDTH, HEIGHT};
         auto dest = SDL_Rect{0, 0, WIDTH, HEIGHT};
@@ -36,12 +38,18 @@ class DrawSystem : public entityx::System<DrawSystem> {
         SDL_SetRenderTarget(renderer, gameTexture);
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
+
+        auto backgroundTexture = backgroundDrawSystem.getTexture();
+        SDL_RenderCopy(renderer, backgroundTexture, &src, &dest);
+
         auto entityTexture = entityDrawSystem.getTexture();
-        auto overlayTexture = overlayDrawSystem.getTexture();
+        SDL_SetTextureBlendMode(entityTexture, SDL_BLENDMODE_BLEND);
         SDL_RenderCopy(renderer, entityTexture, &src, &dest);
 
+        auto overlayTexture = overlayDrawSystem.getTexture();
         SDL_SetTextureBlendMode(overlayTexture, SDL_BLENDMODE_BLEND);
         SDL_RenderCopy(renderer, overlayTexture, &src, &dest);
+
         SDL_SetRenderTarget(renderer, nullptr);
         SDL_RenderCopy(renderer, gameTexture, &src, &destScreen);
         SDL_RenderPresent(renderer);
@@ -50,6 +58,7 @@ class DrawSystem : public entityx::System<DrawSystem> {
   private:
     Game *game;
     EntityDrawSystem entityDrawSystem;
+    BackgroundDrawSystem backgroundDrawSystem;
     OverlayDrawSystem overlayDrawSystem;
     SDL_Texture *gameTexture;
 };
