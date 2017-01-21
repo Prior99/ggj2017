@@ -118,20 +118,36 @@ class EntityDrawSystem {
     static void renderBlock(Game *game, entityx::Entity entity, glm::vec2 offset, double dt) {
         entityx::ComponentHandle<Position> position = entity.component<Position>();
         entityx::ComponentHandle<Drawable> drawable = entity.component<Drawable>();
+        entityx::ComponentHandle<Block> block = entity.component<Block>();
         auto pos = position->position - offset;
         auto playerpos = game->get_player().component<Position>()->position;
         auto texture = game->res_manager().texture("water");
         int width, height;
         SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-        auto off = (int)playerpos.x * 2 % width;
+        auto off = (int)(playerpos.x * 1.5) % width;
         if (off + pos.x + 50 > width) {
             off -= width;
         }
-        SDL_Rect dest{pos.x, pos.y, drawable->getWidth(), HEIGHT - pos.y};
+        SDL_Rect dest{(int)pos.x, (int)pos.y, drawable->getWidth(), HEIGHT - pos.y};
         SDL_Rect src{pos.x + off, pos.y, drawable->getWidth(), HEIGHT - pos.y};
-        SDL_Rect *clip = &src;
 
-        SDL_RenderCopy(game->renderer(), texture, clip, &dest);
+        SDL_RenderCopy(game->renderer(), texture, &src, &dest);
+        if (pos.x < WIDTH * 0.8) {
+            auto die_gischt_textur = game->res_manager().texture("wave");
+            int gischt_width, gischt_height;
+            SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+            int animstep;
+            if (pos.x > WIDTH * 0.6)  {
+                animstep = ((int)playerpos.x / 50 + block->num) % 7;
+            } else {
+                animstep = 6;
+            }
+
+            SDL_Rect dest_von_die_gischt{pos.x - 15, pos.y - 20, 70, 33};
+            SDL_Rect src_von_die_gischt{70 * animstep, 0, 70, 33};
+
+            SDL_RenderCopy(game->renderer(), die_gischt_textur, &src_von_die_gischt, &dest_von_die_gischt);
+        }
     }
 
     static void renderEntity(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
