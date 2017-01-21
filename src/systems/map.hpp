@@ -6,6 +6,7 @@
 #include <glm/gtc/constants.hpp>
 
 #include "game.hpp"
+#include "animation.hpp"
 
 #include "strapon/resource_manager/resource_manager.hpp"
 
@@ -26,14 +27,16 @@ class MapSystem : public entityx::System<MapSystem>,
 private:
     Game *game;
     entityx::TimeDelta local_dt;
-    float last_block_spawned_at;
-    float last_wall_spawned_at = 1700.0;
-    float random_wall_offset = 0.0;
+    entityx::Entity mermaid;
+    float left_border_position;
     float last_height = HEIGHT / 2.0f;
-    float WAVE_GENERATOR_X = WIDTH * 0.4;
 public:
-    MapSystem(Game *game): game(game), local_dt(0), last_block_spawned_at(0.0) {}
+    MapSystem(Game *game): game(game), local_dt(0), left_border_position(0.0) {}
     void configure(entityx::EntityManager& entities, entityx::EventManager& events) override {
+        for(int i=-1; i<WIDTH/BLOCK_WIDTH + 10; i++){
+            spawn_block(entities, i*BLOCK_WIDTH);
+        }
+
         events.subscribe<CollisionEvent>(*this);
     }
 
@@ -48,6 +51,7 @@ public:
         float amplitude = this->game->take_amplitude();
         float inverted_height = lower_offset + amplitude * band;
         float height = HEIGHT - inverted_height;
+        // std::cout << (last_height - MAX_CHANGE) << " < " << height << " < " << (last_height + MAX_CHANGE) << std::endl;
         height = glm::clamp(height, last_height - MAX_CHANGE, last_height + MAX_CHANGE);
         this->last_height = height;
         for (auto entity: entities.entities_with_components(block, position)) {
@@ -156,27 +160,21 @@ public:
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
         auto player = game->get_player();
         auto position = player.component<Position>();
-        float new_player_x = position->position.x + PLAYER_SPEED;
+        float new_player_x = position->position.x + 10.0;
         position->position = glm::vec2(new_player_x, position->position.y);
 
-        while(new_player_x + BLOCK_SPAWN_OFFSET > last_block_spawned_at) {
-            last_block_spawned_at += BLOCK_WIDTH;
-            spawn_block(entities, last_block_spawned_at);
+        if ((int)new_player_x % BLOCK_WIDTH == 0) {
+            float position_of_block = new_player_x + BLOCK_SPAWN_OFFSET;
+            spawn_block(entities, position_of_block);
         }
-
-        if(new_player_x > last_wall_spawned_at + WALL_SPAWN_OFFSET + random_wall_offset)
-        {
-            last_wall_spawned_at = new_player_x + BLOCK_SPAWN_OFFSET;
-            random_wall_offset = (float)(rand() % RAND_WALL_BAND);
-            spawn_wall(entities, last_wall_spawned_at);
-        }
-
         this->wave_it(entities);
         this->move_it(entities);
     }
 
     void receive(const CollisionEvent& ce) {
+        // std::cout << "rofl" << std::endl;
         if(ce.m_first.has_component<Player>()) {
+            // std::cout << "lol" << std::endl;
         }
     }
 };

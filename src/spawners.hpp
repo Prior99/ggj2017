@@ -7,12 +7,15 @@
 #include "entityx/entityx.h"
 #include <glm/vec2.hpp>
 
+#include "animation.hpp"
+
 #include "components/position.hpp"
 #include "components/drawable.hpp"
 #include "components/collectable.hpp"
 #include "components/block.hpp"
 #include "components/player.hpp"
 #include "components/wall.hpp"
+#include "components/overlay.hpp"
 
 #include "game_config.hpp"
 
@@ -51,6 +54,16 @@ void spawn_wall(entityx::EntityManager& entities, float position) {
     wall.assign<Drawable>("block", BLOCK_WIDTH, BLOCK_HEIGHT);
     wall.assign<Position>(glm::vec2(position, HEIGHT/2.0));
     wall.assign<Wall>();
+}
+
+void spawn_mermaid(entityx::EntityManager& entities) {
+    entityx::Entity mermaid = entities.create();
+    mermaid.assign<Position>(glm::vec2(PLAYER_OFFSET + WAVE_GENERATOR_X + 0.5 * BLOCK_WIDTH - 82, HEIGHT - 127 - 60));
+    AnimationCollection mermaidAnimation = AnimationCollection("mermaid");
+    mermaidAnimation.addAnimation("move", 0, 7, 1.5, glm::vec2(125, 127));
+    mermaidAnimation.setAnimation("move", AnimationPlaybackType::LOOP);
+    mermaid.assign<Drawable>("mermaid", 125, 127, mermaidAnimation);
+    mermaid.assign<Overlay>();
 }
 
 #endif

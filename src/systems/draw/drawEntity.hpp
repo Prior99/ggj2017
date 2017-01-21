@@ -195,7 +195,7 @@ class EntityDrawSystem {
         auto progressSize = glm::min(progress * 2, 1.0f);
         int nW = w * progressSize;
         int offsetX = pos.x + (w - nW) / 2;
-        std::cout << "rendertext" << (pos.x + offsetX) << "," << (pos.y - progress * 100) << std::endl;
+        // std::cout << "rendertext" << (pos.x + offsetX) << "," << (pos.y - progress * 100) << std::endl;
         SDL_Rect dest{pos.x + offsetX, pos.y - progress * 100, nW, h * progressSize};
 
         SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);

@@ -44,6 +44,9 @@ int MainState::init() {
     highscore.assign<Highscore>();
     highscore.assign<Overlay>();
     highscore.assign<Text>("Score: 0", SDL_Color {14, 255, 14, 255});
+
+    spawn_mermaid(m_entities);
+    
     return 0;
 }
 

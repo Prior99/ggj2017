@@ -23,9 +23,11 @@ private:
     entityx::TimeDelta local_dt;
     entityx::Entity heli;
     float heli_x;
+    float last_spawn_y;
 public:
     TokenSystem(Game *game): game(game), local_dt(0) {
-		std::srand(time(nullptr));
+	    std::srand(time(nullptr));
+        last_spawn_y = std::rand()/(float)RAND_MAX * HEIGHT/COLLECTABLE_BAND + PROTECTED_TOP;
 	}
 
     void configure(entityx::EntityManager& entities, entityx::EventManager& events) override {
@@ -57,7 +59,8 @@ public:
         if (local_dt > currentSpawnPeriod) {
             local_dt = 0;
 
-            float y = std::rand()/(float)RAND_MAX * HEIGHT/COLLECTABLE_BAND + PROTECTED_TOP;
+            float suggested_y = last_spawn_y - MAX_SPAWN_DISTANCE + std::rand()/(float)RAND_MAX * 2 * MAX_SPAWN_DISTANCE;
+            float y = glm::clamp(suggested_y, PROTECTED_TOP, PROTECTED_TOP + HEIGHT/ COLLECTABLE_BAND);
     		spawn_collectable(entities, player_x + WIDTH - 100 - PLAYER_OFFSET, PROTECTED_TOP, y, (int)(std::rand()/(float)RAND_MAX * 8 + 1));
         }
     }
