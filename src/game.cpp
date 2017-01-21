@@ -84,6 +84,7 @@ int Game::init() {
 
     m_res_manager.load_texture("gradient", "res/gradient.png", m_render);
     m_res_manager.load_texture("block", "res/gj-block.png", m_render);
+    m_res_manager.load_texture("water", "res/water.png", m_render);
     m_res_manager.load_texture("trash", "res/mock-trash.png", m_render);
     m_res_manager.load_texture("jonny", "res/jonny8frames.png", m_render);
     m_res_manager.load_texture("bg01", "res/bg/01.png", m_render);

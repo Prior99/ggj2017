@@ -18,7 +18,7 @@
 #include "../events.hpp"
 #include "../spawners.hpp"
 
-#define BLOCK_SIZE 40
+#define BLOCK_SIZE 50
 #define MAX_CHANGE 15
 
 class MapSystem : public entityx::System<MapSystem>,

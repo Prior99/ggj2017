@@ -8,6 +8,7 @@
 #include "components/uniMultiDrawable.hpp"
 #include "components/overlay.hpp"
 #include "components/stackedDrawable.hpp"
+#include "components/block.hpp"
 
 #include "utils.hpp"
 
@@ -114,8 +115,29 @@ class EntityDrawSystem {
         }
     }
 
+    static void renderBlock(Game *game, entityx::Entity entity, glm::vec2 offset, double dt) {
+        entityx::ComponentHandle<Position> position = entity.component<Position>();
+        entityx::ComponentHandle<Drawable> drawable = entity.component<Drawable>();
+        auto pos = position->position - offset;
+        auto playerpos = game->get_player().component<Position>()->position;
+        auto texture = game->res_manager().texture("water");
+        int width, height;
+        SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+        auto off = (int)playerpos.x * 2 % width;
+        if (off + pos.x + 50 > width) {
+            off -= width;
+        }
+        SDL_Rect dest{pos.x, pos.y, drawable->getWidth(), HEIGHT - pos.y};
+        SDL_Rect src{pos.x + off, pos.y, drawable->getWidth(), HEIGHT - pos.y};
+        SDL_Rect *clip = &src;
+
+        SDL_RenderCopy(game->renderer(), texture, clip, &dest);
+    }
+
     static void renderEntity(Game* game, entityx::Entity entity, glm::vec2 offset, double dt) {
-        if (entity.component<Drawable>()) {
+        if (entity.component<Block>()) {
+            renderBlock(game, entity, offset, dt);
+        } else if (entity.component<Drawable>()) {
             renderSinglePart(game, entity, offset, dt);
         } else if (entity.component<UniMultipartDrawable>()) {
             renderUniMultiPart(game, entity, offset);
