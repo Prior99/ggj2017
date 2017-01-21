@@ -26,4 +26,5 @@ static const float PROTECTED_TOP = 100; // pixels at top, in which no items spaw
 static const float DROP_SPEED = 400;
 static const double TOKEN_SPAWN_PERIOD = 1.5;
 static const double TOKEN_SPAWN_VARIATION = 0.5;
+static const float TEXT_DURATION = 2.0f;
 #endif

@@ -2,6 +2,10 @@
 
 #include "components/drawable.hpp"
 #include "components/position.hpp"
+#include "components/highscore.hpp"
+#include "components/text.hpp"
+#include "components/game-text.hpp"
+#include "components/overlay.hpp"
 
 #include "systems/collision.hpp"
 #include "systems/controls.hpp"
@@ -26,7 +30,7 @@ MainState::~MainState() {
 int MainState::init() {
     m_systems.add<DrawSystem>(game);
     m_systems.add<ControlSystem>();
-    m_systems.add<CollisionSystem>();
+    m_systems.add<CollisionSystem>(this);
     m_systems.add<MapSystem>(game);
     m_systems.add<GarbageCollectionSystem>(game);
     m_systems.add<TokenSystem>(game);
@@ -34,7 +38,30 @@ int MainState::init() {
     m_systems.configure();
 
     game->set_player(spawn_player(m_entities));
+
+    entityx::Entity highscore = m_entities.create();
+    highscore.assign<Position>(glm::vec2(10.f, 10.f));
+    highscore.assign<Highscore>();
+    highscore.assign<Overlay>();
+    highscore.assign<Text>("Score: 0", SDL_Color {14, 255, 14, 255});
     return 0;
+}
+
+void MainState::cash() {
+    this->score += 10;
+    entityx::ComponentHandle<Highscore> highscore;
+    entityx::ComponentHandle<Text> text;
+    auto text_entity = m_entities.create();
+    text_entity.assign<GameText>("+$" + std::to_string(10), SDL_Color{14, 255, 14, 255}, true);
+    text_entity.assign<Position>(glm::vec2(0, 0));
+    for (entityx::Entity entity : m_entities.entities_with_components(highscore,text)) {
+        (void) entity;
+        text->setText("$" + std::to_string(this->get_cash()));
+    }
+}
+
+int MainState::get_cash() {
+    return this->score;
 }
 
 void MainState::update(double dt) {

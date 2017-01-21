@@ -2,6 +2,8 @@
 #define GARBAGECOLLECTORINCLUDEGUASDASD
 
 #include "components/position.hpp"
+#include "components/overlay.hpp"
+#include "components/game-text.hpp"
 #include "events.hpp"
 #include "game.hpp"
 
@@ -24,7 +26,7 @@ public:
 
         entityx::ComponentHandle<Position> position;
         for (entityx::Entity first_entity : em.entities_with_components(position)) {
-            if(position->position.x < player_x - DESPAWN_OFFSET) {
+            if(position->position.x < player_x - DESPAWN_OFFSET && !first_entity.has_component<Overlay>() && !first_entity.has_component<GameText>()) {
                 first_entity.destroy();
             }
         }

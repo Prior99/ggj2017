@@ -13,8 +13,12 @@ class MainState : public State {
     ~MainState();
     int init() override;
     void update(double dt) override;
+    void cash();
+    int get_cash();
+
 
   private:
+    int score = 0;
     Game *game;
     entityx::EventManager m_events;
     entityx::EntityManager m_entities{m_events};
