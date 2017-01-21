@@ -118,9 +118,9 @@ public:
     }
 
     void receive(const CollisionEvent& ce) {
-        std::cout << "rofl" << std::endl;
+        // std::cout << "rofl" << std::endl;
         if(ce.m_first.has_component<Player>()) {
-            std::cout << "lol" << std::endl;
+            // std::cout << "lol" << std::endl;
         }
     }
 };

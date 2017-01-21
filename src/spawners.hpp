@@ -1,6 +1,9 @@
 #ifndef SPAWNERS_HPP
 #define SPAWNERS_HPP
 
+#include <sstream>
+#include <iomanip>
+
 #include "entityx/entityx.h"
 #include <glm/vec2.hpp>
 
@@ -21,11 +24,13 @@ void spawn_block(entityx::EntityManager& entities, float position) {
     block.assign<Block>();
 }
 
-void spawn_collectable(entityx::EntityManager& entities, float position, float start_height, float end_height) {
+void spawn_collectable(entityx::EntityManager& entities, float position, float start_height, float end_height, int textureNr) {
     entityx::Entity collectable = entities.create();
     // TODO specify the size of the collectable here.
     collectable.assign<Position>(glm::vec2(position, start_height), 50, 50);
-    collectable.assign<Drawable>("trash", 20, 20);
+    std::stringstream stream;
+    stream << "trash" << std::setfill('0') << std::setw(2) << textureNr;
+    collectable.assign<Drawable>(stream.str(), 40, 40);
     collectable.assign<Collectable>(end_height);
 }
 
