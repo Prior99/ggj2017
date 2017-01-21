@@ -38,7 +38,8 @@ public:
         }
 
         local_dt += dt;
-        if (local_dt > 0.3) {
+        double currentSpawnPeriod = TOKEN_SPAWN_PERIOD - TOKEN_SPAWN_VARIATION + std::rand()/(float)RAND_MAX * 2 * TOKEN_SPAWN_VARIATION;
+        if (local_dt > currentSpawnPeriod) {
             local_dt = 0;
 
             float player_x = game->get_player().component<Position>()->position.x;

@@ -23,5 +23,7 @@ static const float BLOCK_SPAWN_OFFSET = 1300.0;
 
 static const float COLLECTABLE_BAND = 2; // portion of the screen in which items spawn
 static const float PROTECTED_TOP = 100; // pixels at top, in which no items spawn
-static const float DROP_SPEED = 100;
+static const float DROP_SPEED = 400;
+static const double TOKEN_SPAWN_PERIOD = 1.5;
+static const double TOKEN_SPAWN_VARIATION = 0.5;
 #endif
