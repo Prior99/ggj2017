@@ -29,7 +29,7 @@ public:
 	}
 
     void configure(entityx::EntityManager& entities, entityx::EventManager& events) override {
-        heli_x = WIDTH - 240 - 20;
+        heli_x = WIDTH - 200 - 20;
         heli = entities.create();
         heli.assign<Position>(glm::vec2(heli_x, PROTECTED_TOP - 110));
         AnimationCollection heliAnimation = AnimationCollection("heli");
@@ -58,7 +58,7 @@ public:
             local_dt = 0;
 
             float y = std::rand()/(float)RAND_MAX * HEIGHT/COLLECTABLE_BAND + PROTECTED_TOP;
-    		spawn_collectable(entities, player_x + WIDTH - 150 - PLAYER_OFFSET, PROTECTED_TOP, y, (int)(std::rand()/(float)RAND_MAX * 8 + 1));
+    		spawn_collectable(entities, player_x + WIDTH - 100 - PLAYER_OFFSET, PROTECTED_TOP, y, (int)(std::rand()/(float)RAND_MAX * 8 + 1));
         }
     }
 };

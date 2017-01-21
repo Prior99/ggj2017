@@ -28,7 +28,7 @@ private:
     entityx::TimeDelta local_dt;
     float left_border_position;
     float last_height = HEIGHT / 2.0f;
-    float WAVE_GENERATOR_X = WIDTH * 0.6;
+    float WAVE_GENERATOR_X = WIDTH * 0.4;
 public:
     MapSystem(Game *game): game(game), local_dt(0), left_border_position(0.0) {}
     void configure(entityx::EntityManager& entities, entityx::EventManager& events) override {
