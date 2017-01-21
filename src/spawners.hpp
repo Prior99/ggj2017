@@ -23,14 +23,15 @@ void spawn_block(entityx::EntityManager& entities, float position) {
 
 void spawn_collectable(entityx::EntityManager& entities, float position, float start_height, float end_height) {
     entityx::Entity collectable = entities.create();
-    collectable.assign<Position>(glm::vec2(position, start_height));
+    // TODO specify the size of the collectable here.
+    collectable.assign<Position>(glm::vec2(position, start_height), 50, 50);
     collectable.assign<Drawable>("trash", 20, 20);
     collectable.assign<Collectable>(end_height);
 }
 
 entityx::Entity spawn_player(entityx::EntityManager& entities) {
     entityx::Entity player = entities.create();
-    player.assign<Position>(glm::vec2(300.f, 400.f));
+    player.assign<Position>(glm::vec2(300.f, 400.f), 100, 146);
     AnimationCollection anim_collection("jonny");
     anim_collection.addAnimation("normal", 0, 8, 2.0f, glm::vec2(100, 146));
     anim_collection.setAnimation("normal", AnimationPlaybackType::LOOP);
