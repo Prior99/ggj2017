@@ -79,7 +79,7 @@ public:
         for (auto entity: entities.entities_with_components(block, position))
         {
             auto x = position->position.x;
-            if (x > player_x && x < closest_right) {
+            if (x >= player_x && x < closest_right) {
                 right_block = entity;
                 closest_right = x;
             }
@@ -88,10 +88,15 @@ public:
                 closest_left = x;
             }
         }
+
         float left_height = left_block.component<Position>()->position.y;
         float right_height = right_block.component<Position>()->position.y;
 
-        player_position->position.y = (left_height + right_height) / 2.0f;
+        float dist = closest_right - closest_left;
+        float fac_left = (closest_right- player_x) / dist;
+        float fac_right = 1.0 - fac_left;
+
+        player_position->position.y = left_height*fac_left + right_height*fac_right;
     }
 
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
