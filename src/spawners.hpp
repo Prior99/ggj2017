@@ -12,6 +12,7 @@
 #include "components/collectable.hpp"
 #include "components/block.hpp"
 #include "components/player.hpp"
+#include "components/wall.hpp"
 
 #include "game_config.hpp"
 
@@ -43,6 +44,13 @@ entityx::Entity spawn_player(entityx::EntityManager& entities) {
     player.assign<Drawable>("jonny", 100, 146, anim_collection, glm::vec2(50,140));
     player.assign<Player>();
     return player;
+}
+
+void spawn_wall(entityx::EntityManager& entities, float position) {
+    entityx::Entity wall = entities.create();
+    wall.assign<Drawable>("block", BLOCK_WIDTH, BLOCK_HEIGHT);
+    wall.assign<Position>(glm::vec2(position, HEIGHT/2.0));
+    wall.assign<Wall>();
 }
 
 #endif
