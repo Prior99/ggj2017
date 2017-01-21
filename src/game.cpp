@@ -86,10 +86,10 @@ int Game::init() {
     m_res_manager.load_texture("block", "res/gj-block.png", m_render);
     m_res_manager.load_texture("water", "res/water.png", m_render);
     m_res_manager.load_texture("wave", "res/wave.png", m_render);
-    m_res_manager.load_texture("jonny", "res/jonny8frames.png", m_render);
+    m_res_manager.load_texture("jonny", "res/jonny8frames_02.png", m_render);
     m_res_manager.load_texture("heli", "res/trump_heli.png", m_render);
     m_res_manager.load_texture("wall", "res/wall.png", m_render);
-    m_res_manager.load_texture("mermaid", "res/meerjungfrau.png", m_render);
+    m_res_manager.load_texture("mermaid", "res/meerjungfrau_02.png", m_render);
 
     m_res_manager.load_texture("bg01", "res/bg/01.png", m_render);
     m_res_manager.load_texture("bg02", "res/bg/02.png", m_render);

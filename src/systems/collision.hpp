@@ -23,12 +23,13 @@ class CollisionSystem : public entityx::System<CollisionSystem> {
 
     static SDL_Rect get_rekt(
             entityx::ComponentHandle<Position> pos,
-            entityx::ComponentHandle<Drawable> dwb) {
+            entityx::ComponentHandle<Drawable> dwb,
+            int gray_zone) {
         return SDL_Rect {
-            (int)(pos->position.x - dwb->offset.x),
-            (int)(pos->position.y - dwb->offset.y),
-            (int)dwb->width,
-            (int)dwb->height
+            (int)(pos->position.x - dwb->offset.x) + gray_zone,
+            (int)(pos->position.y - dwb->offset.y) + gray_zone,
+            (int)dwb->width - 2*gray_zone,
+            (int)dwb->height - 2*gray_zone
         };
     }
 
@@ -41,15 +42,9 @@ class CollisionSystem : public entityx::System<CollisionSystem> {
 
         for (entityx::Entity player_entity : es.entities_with_components(player_pos, player, drawable)) {
             (void)player_entity;
-            auto player_rect = get_rekt(player_pos, drawable);
-            const int REKT = 30;
-            player_rect.x += REKT;
-            player_rect.y += REKT;
-            player_rect.w -= REKT;
-            player_rect.h -= REKT;
-
+            auto player_rect = get_rekt(player_pos, drawable, 20);
             for (entityx::Entity garbage : es.entities_with_components(garbage_pos, collectable, drawable)) {
-                auto garbage_rect = get_rekt(garbage_pos, drawable);
+                auto garbage_rect = get_rekt(garbage_pos, drawable, 5);
                 if (SDL_HasIntersection(&player_rect, &garbage_rect)) {
                     garbage.destroy();
                     state.cash();
@@ -58,9 +53,13 @@ class CollisionSystem : public entityx::System<CollisionSystem> {
 
             for (entityx::Entity wall : es.entities_with_components(wall_pos, wall, drawable)) {
                 (void)wall;
-                auto wall_rect = get_rekt(wall_pos, drawable);
+                auto wall_rect = get_rekt(wall_pos, drawable, 10);
+
                 if (SDL_HasIntersection(&player_rect, &wall_rect)) {
+                    if(!player->game_over)
+                        player->vel = glm::vec2(0.0,-20.0);
                     player->game_over = true;
+
                 }
             }
         }

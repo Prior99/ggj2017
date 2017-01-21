@@ -154,27 +154,28 @@ public:
         auto position = player.component<Position>();
 
         if(player_comp->game_over) {
-            player_comp->vel += glm::vec2(0.0,-1.0);
+            player_comp->vel += glm::vec2(0.0,2.0);
             position->position += player_comp->vel;
+        } else {
+
+            float new_player_x = position->position.x + PLAYER_SPEED;
+            position->position = glm::vec2(new_player_x, position->position.y);
+
+            while(new_player_x + BLOCK_SPAWN_OFFSET > last_block_spawned_at) {
+                last_block_spawned_at += BLOCK_WIDTH;
+                spawn_block(entities, last_block_spawned_at);
+            }
+
+            if(new_player_x > last_wall_spawned_at + WALL_SPAWN_OFFSET + random_wall_offset)
+            {
+                last_wall_spawned_at = new_player_x + BLOCK_SPAWN_OFFSET;
+                random_wall_offset = (float)(rand() % RAND_WALL_BAND);
+                spawn_wall(entities, last_wall_spawned_at);
+            }
+
+            this->wave_it(entities);
+            this->move_it(entities);
         }
-
-        float new_player_x = position->position.x + PLAYER_SPEED;
-        position->position = glm::vec2(new_player_x, position->position.y);
-
-        while(new_player_x + BLOCK_SPAWN_OFFSET > last_block_spawned_at) {
-            last_block_spawned_at += BLOCK_WIDTH;
-            spawn_block(entities, last_block_spawned_at);
-        }
-
-        if(new_player_x > last_wall_spawned_at + WALL_SPAWN_OFFSET + random_wall_offset)
-        {
-            last_wall_spawned_at = new_player_x + BLOCK_SPAWN_OFFSET;
-            random_wall_offset = (float)(rand() % RAND_WALL_BAND);
-            spawn_wall(entities, last_wall_spawned_at);
-        }
-
-        this->wave_it(entities);
-        this->move_it(entities);
     }
 };
 

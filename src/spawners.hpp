@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <string>
 
 #include "entityx/entityx.h"
 #include <glm/vec2.hpp>
@@ -16,6 +17,7 @@
 #include "components/player.hpp"
 #include "components/wall.hpp"
 #include "components/overlay.hpp"
+#include "components/decay.hpp"
 
 #include "game_config.hpp"
 
@@ -28,23 +30,27 @@ void spawn_block(entityx::EntityManager& entities, float position) {
     block.assign<Block>();
 }
 
-void spawn_collectable(entityx::EntityManager& entities, float position, float start_height, float end_height, int textureNr) {
+void spawn_collectable(entityx::EntityManager& entities, float position, float start_height, float end_height, int textureNr, bool decay = false) {
     entityx::Entity collectable = entities.create();
     // TODO specify the size of the collectable here.
     collectable.assign<Position>(glm::vec2(position, start_height));
     std::stringstream stream;
     stream << "trash" << std::setfill('0') << std::setw(2) << textureNr;
-    collectable.assign<Drawable>(stream.str(), 40, 40);
+    std::string id = stream.str();
+    collectable.assign<Drawable>(id, 50, 50);
     collectable.assign<Collectable>(end_height);
+    if(decay) {
+        collectable.assign<Decay>();
+    }
 }
 
 entityx::Entity spawn_player(entityx::EntityManager& entities) {
     entityx::Entity player = entities.create();
     player.assign<Position>(glm::vec2(300.f, 400.f));
     AnimationCollection anim_collection("jonny");
-    anim_collection.addAnimation("normal", 0, 8, 2.0f, glm::vec2(100, 146));
+    anim_collection.addAnimation("normal", 0, 7, 2.0f, glm::vec2(100, 143));
     anim_collection.setAnimation("normal", AnimationPlaybackType::LOOP);
-    player.assign<Drawable>("jonny", 100, 146, anim_collection, glm::vec2(50,140));
+    player.assign<Drawable>("jonny", 100, 143, anim_collection, glm::vec2(50,140));
     player.assign<Player>();
     return player;
 }
@@ -66,6 +72,16 @@ void spawn_mermaid(entityx::EntityManager& entities) {
     mermaidAnimation.setAnimation("move", AnimationPlaybackType::LOOP);
     mermaid.assign<Drawable>("mermaid", 125, 127, mermaidAnimation);
     mermaid.assign<Overlay>();
+}
+
+entityx::Entity spawn_heli(entityx::EntityManager& entities) {
+    entityx::Entity heli = entities.create();
+    heli.assign<Position>(glm::vec2(HELI_SCREEN_POS_X, HELI_SCREEN_POS_Y));
+    AnimationCollection heliAnimation = AnimationCollection("heli");
+    heliAnimation.addAnimation("animate", 0, 3, 0.3, glm::vec2(HELI_WIDTH, HELI_HEIGHT));
+    heliAnimation.setAnimation("animate", AnimationPlaybackType::LOOP);
+    heli.assign<Drawable>("heli", HELI_WIDTH, HELI_HEIGHT, heliAnimation);
+    return heli;
 }
 
 #endif

@@ -3,6 +3,8 @@
 #endif
 
 #include "game.hpp"
+#include <cstdlib>
+#include <ctime>
 
 void mainloop(void *args) {
     auto game = static_cast<Game *>(args);
@@ -10,6 +12,7 @@ void mainloop(void *args) {
 }
 
 int main() {
+    std::srand(time(nullptr));
     Game game;
 
     if (game.init() != 0)
