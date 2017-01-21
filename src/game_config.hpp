@@ -17,15 +17,17 @@ static const float MAX_BLOCK_HEIGHT = 0.75;
 static const int BLOCK_HEIGHT = 600;
 static const int BLOCK_WIDTH = 50;
 static const int PLAYER_OFFSET = 200;
-static const float PLAYER_SPEED = 9.5;
+static const float PLAYER_SPEED = 250.0;
 
 static const float WAVE_GENERATOR_X = WIDTH * 0.4;
 static const float DESPAWN_OFFSET = 800.0;
 // The distance at which new blocks and walls are spawned.
 static const float BLOCK_SPAWN_OFFSET = 1300.0;
-// The rough distance between two walls.
-static const float WALL_SPAWN_OFFSET = 30.0;
-static const int RAND_WALL_BAND = 1000;
+
+// MIN distance between two obstacles
+static const float OBSTACLE_SPAWN_OFFSET = 200.0;
+static const int RAND_OBSTACLE_BAND = 200;
+static const float OBSTACLE_SPEED = 50.0;
 
 static const float COLLECTABLE_BAND = 3; // portion of the screen in which items spawn
 static const float PROTECTED_TOP = 120; // pixels at top, in which no items spawn
@@ -35,7 +37,6 @@ static const double TOKEN_SPAWN_VARIATION = 0.5;
 static const float MAX_SPAWN_DISTANCE = 150;
 
 static const float TEXT_DURATION = 2.0f;
-
 
 static const int MERMAID_WIDTH = 126;
 static const int MERMAID_HEIGHT = 128;
@@ -49,5 +50,10 @@ static const int HELI_MOVE_MAX = 20;
 static const int HELI_SCREEN_POS_Y = HELI_MOVE_MAX;
 static const int HELI_SCREEN_POS_X = WIDTH - HELI_WIDTH - HELI_MOVE_MAX;
 
+static const int DEATH_BOARD_WIDTH = 1280;
+static const int DEATH_BOARD_HEIGHT = 720;
+
+static const int CLOUD_WIDTH = 350;
+static const int CLOUD_HEIGHT = 260;
 
 #endif

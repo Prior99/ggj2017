@@ -178,18 +178,15 @@ class EntityDrawSystem {
         }
     }
 
-    void update(entityx::EntityManager &es, entityx::EventManager &events,
-                entityx::TimeDelta dt) {
-        auto player = game->get_player();
-        auto position = player.component<Position>();
-        glm::vec2 offset = glm::vec2(position->position.x - PLAYER_OFFSET, 0.0);
-
-        // Change to render into rendertexture for now
-        SDL_SetRenderTarget(game->renderer(), entityTexture);
-        SDL_SetRenderDrawColor(game->renderer(), 128, 128, 255, 0);
-        SDL_RenderClear(game->renderer());
-
-        for (entityx::Entity entity : es.entities_with_components(position)) {
+    template<int L> void render_layer(
+            entityx::EntityManager& em,
+            entityx::EventManager& events,
+            entityx::TimeDelta dt,
+            glm::vec2 offset)
+    {
+        entityx::ComponentHandle<Position> position;
+        entityx::ComponentHandle<Layer<L>> layer;
+        for (entityx::Entity entity : em.entities_with_components(position, layer)) {
             if(!entity.component<Overlay>()) {
                 auto privOffset = glm::vec2(0, 0);
                 auto draw = entity.component<Drawable>();
@@ -199,6 +196,25 @@ class EntityDrawSystem {
                 renderEntity(game, entity, offset + privOffset, dt);
             }
         }
+    }
+
+    void update(
+            entityx::EntityManager& em,
+            entityx::EventManager &events,
+            entityx::TimeDelta dt)
+    {
+        auto player = game->get_player();
+        auto position = player.component<Position>();
+        glm::vec2 offset = glm::vec2(position->position.x - PLAYER_OFFSET, 0.0);
+
+        // Change to render into rendertexture for now
+        SDL_SetRenderTarget(game->renderer(), entityTexture);
+        SDL_SetRenderDrawColor(game->renderer(), 128, 128, 255, 0);
+        SDL_RenderClear(game->renderer());
+
+        render_layer<1>(em, events, dt, offset);
+        render_layer<2>(em, events, dt, offset);
+        render_layer<3>(em, events, dt, offset);
     }
 
     SDL_Texture *getTexture() {

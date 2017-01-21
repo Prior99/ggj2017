@@ -90,6 +90,7 @@ int Game::init() {
     m_res_manager.load_texture("heli", "res/trump_heli.png", m_render);
     m_res_manager.load_texture("wall", "res/wall.png", m_render);
     m_res_manager.load_texture("mermaid", "res/meerjungfrau_02.png", m_render);
+    m_res_manager.load_texture("cloud", "res/gewitterwolke_B350.png", m_render);
 
     m_res_manager.load_texture("bg01", "res/bg/01.png", m_render);
     m_res_manager.load_texture("bg02", "res/bg/02.png", m_render);
@@ -108,6 +109,8 @@ int Game::init() {
 
     m_res_manager.load_font("font-big", "res/DejaVuSans.ttf", 40);
     m_res_manager.load_font("font-small", "res/DejaVuSans.ttf", 30);
+
+    m_res_manager.load_texture("death_board", "res/game_over_board.png", m_render);
 
     SDL_RenderSetLogicalSize(m_render, WIDTH, HEIGHT);
 

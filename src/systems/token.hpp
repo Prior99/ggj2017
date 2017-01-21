@@ -12,7 +12,6 @@
 
 #include "components/position.hpp"
 #include "components/collectable.hpp"
-#include "components/decay.hpp"
 
 #include "../spawners.hpp"
 
@@ -46,7 +45,7 @@ public:
     void update_mermaid(float player_x) {
         float x_offset = HELI_MOVE_MAX * glm::sin(total_time / 0.9434);
         float y_offset = HELI_MOVE_MAX * glm::cos(total_time / 1.7435);
-        float x = PLAYER_OFFSET + WAVE_GENERATOR_X - MERMAID_WIDTH / 2.0 + x_offset;
+        float x = player_x + WAVE_GENERATOR_X - MERMAID_WIDTH / 2.0 + x_offset;
         float y = HEIGHT - MERMAID_HEIGHT - 60 + y_offset;
         mermaid.component<Position>()->position = glm::vec2(x, y);
     }
@@ -67,49 +66,41 @@ public:
         update_heli(player_x);
 
         local_dt += dt;
-        double currentSpawnPeriod = TOKEN_SPAWN_PERIOD - TOKEN_SPAWN_VARIATION + std::rand()/(float)RAND_MAX * 2 * TOKEN_SPAWN_VARIATION;
+        double currentSpawnPeriod = TOKEN_SPAWN_PERIOD + (2.0 * std::rand()/(float)RAND_MAX - 1.0) *  TOKEN_SPAWN_VARIATION;
         if (local_dt > currentSpawnPeriod) {
             local_dt = 0;
 
-            float suggested_y = last_spawn_y - MAX_SPAWN_DISTANCE + std::rand()/(float)RAND_MAX * 2 * MAX_SPAWN_DISTANCE;
-            float y = glm::clamp(suggested_y, PROTECTED_TOP, PROTECTED_TOP + HEIGHT/ COLLECTABLE_BAND);
-            spawn_collectable(entities, player_x + WIDTH - 100 - PLAYER_OFFSET, PROTECTED_TOP, y, rand() % 8 + 1);
+            float suggested_y = last_spawn_y + (2.0 * rand()/(float)RAND_MAX - 1.0) * MAX_SPAWN_DISTANCE;
+            last_spawn_y = glm::clamp(suggested_y, PROTECTED_TOP, PROTECTED_TOP + HEIGHT/ COLLECTABLE_BAND);
+            int gbg_id = rand() % 8 + 1;
+            auto heli_pos = heli.component<Position>()->position;
+            float heli_x = heli_pos.x + HELI_WIDTH/2.0;
+            float x_pos = heli_x + WIDTH - 100 - PLAYER_OFFSET;
+            float y_pos = heli_pos.y + HELI_HEIGHT;
+            spawn_collectable(entities, x_pos, y_pos, last_spawn_y, gbg_id);
         }
     }
 
     void dead_update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
         float player_x = game->get_player().component<Position>()->position.x;
+        update_heli(player_x);
         for(int i=0; i<10; i++) {
             float x = rand() % WIDTH + player_x - PLAYER_OFFSET;
             float y = rand() % HEIGHT;
-            spawn_collectable(entities, x, y, y, rand() % 8 + 1, true);
-        }
-
-        entityx::ComponentHandle<Decay> decay;
-        for(entityx::Entity e: entities.entities_with_components(decay)) {
-            if((decay->dt += dt) > decay->timeout) {
-                e.destroy();
-            }
-        }
-
-        if(mermaid.valid()) {
-            if(!mermaid.has_component<Decay>()) {
-                mermaid.assign<Decay>(3.0f);
-            }
-        }
-        if(heli.valid()) {
-            if(!heli.has_component<Decay>()) {
-                heli.assign<Decay>(2.5f);
-            }
+            spawn_collectable(entities, x, y, y, rand() % 8 + 1);
         }
     }
 
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
         total_time += dt;
         if(!game->get_player().component<Player>()->game_over)
+        {
             normal_update(entities, events, dt);
+        }
         else
+        {
             dead_update(entities, events, dt);
+        }
     }
 };
 

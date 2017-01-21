@@ -15,9 +15,9 @@
 #include "components/collectable.hpp"
 #include "components/block.hpp"
 #include "components/player.hpp"
-#include "components/wall.hpp"
+#include "components/obstacle.hpp"
 #include "components/overlay.hpp"
-#include "components/decay.hpp"
+#include "components/layer.hpp"
 
 #include "game_config.hpp"
 
@@ -28,9 +28,10 @@ void spawn_block(entityx::EntityManager& entities, float position) {
     // TODO htf scale the images
     block.assign<Drawable>("block", BLOCK_WIDTH, BLOCK_HEIGHT);
     block.assign<Block>();
+    block.assign<Layer<1>>();
 }
 
-void spawn_collectable(entityx::EntityManager& entities, float position, float start_height, float end_height, int textureNr, bool decay = false) {
+void spawn_collectable(entityx::EntityManager& entities, float position, float start_height, float end_height, int textureNr) {
     entityx::Entity collectable = entities.create();
     // TODO specify the size of the collectable here.
     collectable.assign<Position>(glm::vec2(position, start_height));
@@ -39,9 +40,7 @@ void spawn_collectable(entityx::EntityManager& entities, float position, float s
     std::string id = stream.str();
     collectable.assign<Drawable>(id, 50, 50);
     collectable.assign<Collectable>(end_height);
-    if(decay) {
-        collectable.assign<Decay>();
-    }
+    collectable.assign<Layer<2>>();
 }
 
 entityx::Entity spawn_player(entityx::EntityManager& entities) {
@@ -52,6 +51,7 @@ entityx::Entity spawn_player(entityx::EntityManager& entities) {
     anim_collection.setAnimation("normal", AnimationPlaybackType::LOOP);
     player.assign<Drawable>("jonny", 100, 143, anim_collection, glm::vec2(50,140));
     player.assign<Player>();
+    player.assign<Layer<1>>();
     return player;
 }
 
@@ -60,7 +60,20 @@ void spawn_wall(entityx::EntityManager& entities, float position) {
     wall.assign<Drawable>("wall", 160, 732);
     // TODO make random
     wall.assign<Position>(glm::vec2(position, HEIGHT/2.0));
-    wall.assign<Wall>();
+    wall.assign<Obstacle>();
+    wall.assign<Layer<2>>();
+}
+
+void spawn_cloud(entityx::EntityManager& entities, float position) {
+    entityx::Entity cloud = entities.create();
+    AnimationCollection anim_collection("cloud");
+    anim_collection.addAnimation("normal", 0, 6, 1.0f, glm::vec2(CLOUD_WIDTH, CLOUD_HEIGHT));
+    anim_collection.setAnimation("normal", AnimationPlaybackType::LOOP);
+    cloud.assign<Drawable>("cloud", CLOUD_WIDTH, CLOUD_HEIGHT, anim_collection);
+    // TODO make random
+    cloud.assign<Position>(glm::vec2(position, 20));
+    cloud.assign<Obstacle>();
+    cloud.assign<Layer<2>>();
 }
 
 entityx::Entity spawn_mermaid(entityx::EntityManager& entities) {
@@ -71,7 +84,7 @@ entityx::Entity spawn_mermaid(entityx::EntityManager& entities) {
     mermaidAnimation.addAnimation("move", 0, 7, 1.5, merm_size);
     mermaidAnimation.setAnimation("move", AnimationPlaybackType::LOOP);
     mermaid.assign<Drawable>("mermaid", MERMAID_WIDTH, MERMAID_HEIGHT, mermaidAnimation);
-    mermaid.assign<Overlay>();
+    mermaid.assign<Layer<3>>();
     return mermaid;
 }
 
@@ -82,7 +95,15 @@ entityx::Entity spawn_heli(entityx::EntityManager& entities) {
     heliAnimation.addAnimation("animate", 0, 3, 0.3, glm::vec2(HELI_WIDTH, HELI_HEIGHT));
     heliAnimation.setAnimation("animate", AnimationPlaybackType::LOOP);
     heli.assign<Drawable>("heli", HELI_WIDTH, HELI_HEIGHT, heliAnimation);
+    heli.assign<Layer<3>>();
     return heli;
+}
+
+void spawn_death_board(entityx::EntityManager& entities) {
+    entityx::Entity death_board = entities.create();
+    death_board.assign<Position>(glm::vec2(0.0, 0.0));
+    death_board.assign<Drawable>("death_board", DEATH_BOARD_WIDTH, DEATH_BOARD_HEIGHT);
+    death_board.assign<Overlay>();
 }
 
 #endif

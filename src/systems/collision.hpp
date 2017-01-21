@@ -4,9 +4,10 @@
 #include "components/position.hpp"
 #include "components/player.hpp"
 #include "components/collectable.hpp"
-#include "components/wall.hpp"
+#include "components/obstacle.hpp"
 #include "game.hpp"
 #include "main_state.hpp"
+#include "../spawners.hpp"
 
 #include "entityx/entityx.h"
 
@@ -33,17 +34,17 @@ class CollisionSystem : public entityx::System<CollisionSystem> {
         };
     }
 
-    void update(entityx::EntityManager &es, entityx::EventManager &events, double dt) {
-        entityx::ComponentHandle<Position> player_pos, garbage_pos, wall_pos;
+    void update(entityx::EntityManager& em, entityx::EventManager& events, double dt) {
+        entityx::ComponentHandle<Position> player_pos, garbage_pos, obstacle_pos;
         entityx::ComponentHandle<Drawable> drawable;
         entityx::ComponentHandle<Collectable> collectable;
         entityx::ComponentHandle<Player> player;
-        entityx::ComponentHandle<Wall> wall;
+        entityx::ComponentHandle<Obstacle> obstacle;
 
-        for (entityx::Entity player_entity : es.entities_with_components(player_pos, player, drawable)) {
+        for (entityx::Entity player_entity : em.entities_with_components(player_pos, player, drawable)) {
             (void)player_entity;
             auto player_rect = get_rekt(player_pos, drawable, 20);
-            for (entityx::Entity garbage : es.entities_with_components(garbage_pos, collectable, drawable)) {
+            for (entityx::Entity garbage : em.entities_with_components(garbage_pos, collectable, drawable)) {
                 auto garbage_rect = get_rekt(garbage_pos, drawable, 5);
                 if (SDL_HasIntersection(&player_rect, &garbage_rect)) {
                     garbage.destroy();
@@ -51,13 +52,16 @@ class CollisionSystem : public entityx::System<CollisionSystem> {
                 }
             }
 
-            for (entityx::Entity wall : es.entities_with_components(wall_pos, wall, drawable)) {
-                (void)wall;
-                auto wall_rect = get_rekt(wall_pos, drawable, 10);
+            for (entityx::Entity obstacle : em.entities_with_components(obstacle_pos, obstacle, drawable)) {
+                (void)obstacle;
+                auto obstacle_rect = get_rekt(obstacle_pos, drawable, 10);
 
-                if (SDL_HasIntersection(&player_rect, &wall_rect)) {
-                    if(!player->game_over)
-                        player->vel = glm::vec2(0.0,-20.0);
+                if (SDL_HasIntersection(&player_rect, &obstacle_rect)) {
+                    if(!player->game_over) {
+                        // Initial death vertical velocity.
+                        player->vel = -20.0;
+                        spawn_death_board(em);
+                    }
                     player->game_over = true;
 
                 }

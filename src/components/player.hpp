@@ -10,7 +10,8 @@ public:
     bool is_jumping;
     bool is_diving;
 
-    glm::vec2 vel;
+    // vertical velocity
+    float vel;
 
     virtual ~Player() {
         game_over = false;

@@ -25,8 +25,8 @@ private:
     Game *game;
     entityx::TimeDelta local_dt;
     float last_block_spawned_at;
-    float last_wall_spawned_at = 1700.0;
-    float random_wall_offset = 0.0;
+    float last_obstacle_spawned_at = 1700.0;
+    float random_obstacle_offset = 0.0;
     float last_height = HEIGHT / 2.0f;
     float WAVE_GENERATOR_X = WIDTH * 0.4;
 public:
@@ -153,28 +153,37 @@ public:
         auto player_comp = player.component<Player>();
         auto position = player.component<Position>();
 
+        float new_player_x = position->position.x + dt * PLAYER_SPEED;
+        position->position = glm::vec2(new_player_x, position->position.y);
         if(player_comp->game_over) {
-            player_comp->vel += glm::vec2(0.0,2.0);
-            position->position += player_comp->vel;
+            player_comp->vel += 2.0;
+            position->position.y += player_comp->vel;
+            (void)this->game->take_amplitude();
         } else {
-
-            float new_player_x = position->position.x + PLAYER_SPEED;
-            position->position = glm::vec2(new_player_x, position->position.y);
-
             while(new_player_x + BLOCK_SPAWN_OFFSET > last_block_spawned_at) {
                 last_block_spawned_at += BLOCK_WIDTH;
                 spawn_block(entities, last_block_spawned_at);
             }
 
-            if(new_player_x > last_wall_spawned_at + WALL_SPAWN_OFFSET + random_wall_offset)
+            if(new_player_x > last_obstacle_spawned_at + OBSTACLE_SPAWN_OFFSET + random_obstacle_offset)
             {
-                last_wall_spawned_at = new_player_x + BLOCK_SPAWN_OFFSET;
-                random_wall_offset = (float)(rand() % RAND_WALL_BAND);
-                spawn_wall(entities, last_wall_spawned_at);
+                last_obstacle_spawned_at = new_player_x + BLOCK_SPAWN_OFFSET;
+                random_obstacle_offset = (float)(rand() % RAND_OBSTACLE_BAND);
+                if(rand() % 2 == 0)
+                    spawn_wall(entities, last_obstacle_spawned_at);
+                else
+                    spawn_cloud(entities, last_obstacle_spawned_at);
             }
 
             this->wave_it(entities);
             this->move_it(entities);
+        }
+
+        entityx::ComponentHandle<Obstacle> obstacle;
+        for (auto entity: entities.entities_with_components(obstacle, position))
+        {
+            (void)entity;
+            position->position.x += dt * OBSTACLE_SPEED;
         }
     }
 };
