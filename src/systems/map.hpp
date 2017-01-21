@@ -79,14 +79,15 @@ public:
         for (auto entity: entities.entities_with_components(block, position))
         {
             auto x = position->position.x;
-            if (x > player_x && x < closest_right)
+            if (x > player_x && x < closest_right) {
                 right_block = entity;
-            if (x < player_x && x > closest_left)
+                closest_right = x;
+            }
+            if (x < player_x && x > closest_left) {
                 left_block = entity;
+                closest_left = x;
+            }
         }
-
-        std::cout << left_block << std::endl;
-        std::cout << right_block << std::endl;
         float left_height = left_block.component<Position>()->position.y;
         float right_height = right_block.component<Position>()->position.y;
 

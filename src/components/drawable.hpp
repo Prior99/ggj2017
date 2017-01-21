@@ -12,7 +12,8 @@ struct Drawable : entityx::Component<Drawable> {
         textureKey(key),
         height(height),
         width(width),
-        animation(animation) {
+        animation(animation),
+        offset(offset) {
     }
 
     float getHeight() {
