@@ -74,8 +74,7 @@ public:
             last_spawn_y = glm::clamp(suggested_y, PROTECTED_TOP, PROTECTED_TOP + HEIGHT/ COLLECTABLE_BAND);
             int gbg_id = rand() % 8 + 1;
             auto heli_pos = heli.component<Position>()->position;
-            float heli_x = heli_pos.x + HELI_WIDTH/2.0;
-            float x_pos = heli_x + WIDTH - 100 - PLAYER_OFFSET;
+            float x_pos = heli_pos.x + HELI_WIDTH/2.0;
             float y_pos = heli_pos.y + HELI_HEIGHT;
             spawn_collectable(entities, x_pos, y_pos, last_spawn_y, gbg_id);
         }
