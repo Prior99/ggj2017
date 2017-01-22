@@ -5,6 +5,7 @@
 ### 0. Basics
 
 Use a Linux-based machine. Preferrably Arch Linux.
+The game requires pulseaudio.
 
 ### 1. Tools
 
@@ -27,12 +28,12 @@ On Arch Linux you could run: ```sudo pacman -S sdl2 sdl2_image sdl2_mixer sdl2_t
 
 ### 3. Clone this repository
 
-You need to clone this repository somewhere onto your laptop: ```git clone --recursive gitlab@git.92k.de:gamejam/igj10.git```.
+You need to clone this repository somewhere onto your laptop: ```git clone --recursive git@github.com:Prior99/ggj2017.git```.
 Please note the ```--recursive``` which will also initialize the neccessary git submodules. If you did not use ```---recursive```, please initialize them manually.
 
 ### 4. Build the sources
 
-There is a Makefile included for your convenience. 
+There is a Makefile included for your convenience.
 
  - Build the sources: ```make```
  - Run the game: ```make run```
