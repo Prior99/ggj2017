@@ -25,7 +25,7 @@ MainState::MainState(Game* game) : game(game) {}
 
 int MainState::init() {
     m_systems.add<DrawSystem>(game);
-    m_systems.add<ControlSystem>();
+    m_systems.add<ControlSystem>(game);
     m_systems.add<CollisionSystem>(*this, *game);
     m_systems.add<MapSystem>(game);
     m_systems.add<GarbageCollectionSystem>(game);

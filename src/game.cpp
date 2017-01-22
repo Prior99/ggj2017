@@ -163,7 +163,17 @@ float Game::take_amplitude() {
     return (max - this->absolute_min) / (this->absolute_max - this->absolute_min);
 }
 
+void Game::restart() {
+    m_restart = true;
+}
+
 void Game::mainloop() {
+    if(m_restart) {
+        m_restart = false;
+        m_states.pop();
+        m_states.push({"main", std::make_unique<MainState>(this)});
+        m_states.top().second->init();
+    }
     int current_time = SDL_GetTicks();
     double dt = (current_time - m_last_frame_time) / 1000.0;
     m_last_frame_time = current_time;

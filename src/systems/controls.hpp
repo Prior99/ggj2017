@@ -5,6 +5,7 @@
 #include "components/player.hpp"
 
 #include "game_config.hpp"
+#include "game.hpp"
 
 #include <glm/vec2.hpp>
 #include <glm/glm.hpp>
@@ -13,6 +14,8 @@
 
 class ControlSystem : public entityx::System<ControlSystem> {
     public:
+        ControlSystem(Game* game): game(game) {}
+
         void update(entityx::EntityManager &es, entityx::EventManager &events, double dt) {
             entityx::ComponentHandle<Player> player;
             entityx::ComponentHandle<Position> position;
@@ -29,8 +32,13 @@ class ControlSystem : public entityx::System<ControlSystem> {
                     if(!player->is_diving)
                         player->is_diving = true;
                 }
+                if (player->game_over && (state[SDL_SCANCODE_RETURN] || state[SDL_SCANCODE_KP_ENTER])) {
+                    game->restart();
+                }
             }
         }
+    private:
+        Game* game;
 };
 
 #endif

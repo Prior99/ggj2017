@@ -30,6 +30,7 @@ class Game {
     void tick_audio();
     float take_amplitude();
     float peek_amplitude();
+    void restart();
     std::stack<std::pair<std::string, std::unique_ptr<State>>> &states();
     const std::string &statename() const;
 
@@ -42,6 +43,7 @@ class Game {
 
   private:
     bool m_running = true;
+    bool m_restart = false;
     int m_last_frame_time = 0;
     float *data;
     std::vector<float> amplitudes;
