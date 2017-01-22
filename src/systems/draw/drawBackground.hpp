@@ -1,3 +1,6 @@
+#ifndef DRAWOVERLABACKGROUNDYSDALIGHTSDASDASSD
+#define DRAWOVERLABACKGROUNDYSDALIGHTSDASDASSD
+
 #include "game.hpp"
 
 #include "components/position.hpp"
@@ -28,7 +31,9 @@ class BackgroundDrawSystem {
         }
 
         void draw_parallax(std::string texkey, float parallaxity_x) {
-            auto position = this->game->get_player().component<Position>()->position;
+            if(!this->game->player.valid())
+                return;
+            auto position = this->game->player.component<Position>()->position;
             auto tex = game->res_manager().texture(texkey);
             int width, height;
             SDL_QueryTexture(tex, nullptr, nullptr, &width, &height);
@@ -64,3 +69,5 @@ class BackgroundDrawSystem {
         Game *game;
         SDL_Texture *backgroundTexture;
 };
+
+#endif

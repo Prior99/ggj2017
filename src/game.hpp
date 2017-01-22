@@ -24,10 +24,8 @@ class Game {
     void mainloop();
     bool is_running();
     void shutdown();
-    void popstate();
 
-    void set_player(entityx::Entity player);
-    entityx::Entity get_player(void);
+    entityx::Entity player;
     bool init_audio();
     void tick_audio();
     float take_amplitude();
@@ -55,7 +53,6 @@ class Game {
     std::stack<std::pair<std::string, std::unique_ptr<State>>> m_states;
     entityx::EntityX m_ex;
     ResourceManager m_res_manager;
-    entityx::Entity player;
 };
 
 #endif /* end of include guard: GAME_HPP */

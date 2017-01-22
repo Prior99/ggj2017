@@ -54,7 +54,7 @@ class CollisionSystem : public entityx::System<CollisionSystem> {
 
             for (entityx::Entity obstacle : em.entities_with_components(obstacle_pos, obstacle, drawable)) {
                 (void)obstacle;
-                auto obstacle_rect = get_rekt(obstacle_pos, drawable, 10);
+                auto obstacle_rect = get_rekt(obstacle_pos, drawable, 35);
 
                 if (SDL_HasIntersection(&player_rect, &obstacle_rect)) {
                     if(!player->game_over) {

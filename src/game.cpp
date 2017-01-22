@@ -120,14 +120,6 @@ int Game::init() {
     return 0;
 }
 
-void Game::set_player(entityx::Entity player) {
-    this->player = player;
-}
-
-entityx::Entity Game::get_player() {
-    return this->player;
-}
-
 void Game::tick_audio() {
     int len = buffer_size;
     int error;
@@ -191,7 +183,7 @@ ResourceManager &Game::res_manager() {
     return m_res_manager;
 }
 
-std::stack<std::pair<std::string, std::unique_ptr<State>>> &Game::states() {
+std::stack<std::pair<std::string, std::unique_ptr<State>>>& Game::states() {
     return m_states;
 }
 
@@ -204,10 +196,6 @@ void Game::shutdown() {
 #ifdef __EMSCRIPTEN__
     emscripten_cancel_main_loop();
 #endif
-}
-
-void Game::popstate() {
-    m_states.pop();
 }
 
 const std::string &Game::statename() const {

@@ -4,6 +4,7 @@
 #include <glm/vec2.hpp>
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <map>
 
 enum struct AnimationPlaybackType {
     LOOP,

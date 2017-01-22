@@ -33,14 +33,14 @@ int MainState::init() {
     m_systems.add<AnimationSystem>();
     m_systems.configure();
 
-    game->set_player(spawn_player(m_entities));
+    game->player = spawn_player(m_entities);
 
     entityx::Entity highscore = m_entities.create();
     highscore.assign<Position>(glm::vec2(10.f, 10.f));
     highscore.assign<Highscore>();
     highscore.assign<Overlay>();
     highscore.assign<Text>("Score: 0", SDL_Color {14, 255, 14, 255});
-    
+
     return 0;
 }
 

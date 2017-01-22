@@ -19,7 +19,7 @@ public:
     }
 
     void update(entityx::EntityManager& em, entityx::EventManager& events, double dt) {
-        auto player = game->get_player();
+        auto player = game->player;
         auto player_position = player.component<Position>();
         float player_x = player_position->position.x;
 

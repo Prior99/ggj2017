@@ -33,7 +33,7 @@ public:
     MapSystem(Game *game): game(game), local_dt(0), last_block_spawned_at(0.0) {}
 
     void wave_it(entityx::EntityManager& entities) {
-        auto player = game->get_player();
+        auto player = game->player;
         auto player_position = player.component<Position>();
         auto mid_position = player_position->position.x + WAVE_GENERATOR_X;
         entityx::ComponentHandle<Block> block;
@@ -67,7 +67,7 @@ public:
     }
 
     void move_it(entityx::EntityManager& entities) {
-        auto player = game->get_player();
+        auto player = game->player;
         auto player_position = player.component<Position>();
         auto player_x = player_position->position.x;
 
@@ -149,7 +149,7 @@ public:
     }
 
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
-        auto player = game->get_player();
+        auto player = game->player;
         auto player_comp = player.component<Player>();
         auto position = player.component<Position>();
 
@@ -165,14 +165,14 @@ public:
                 spawn_block(entities, last_block_spawned_at);
             }
 
-            if(new_player_x > last_obstacle_spawned_at + OBSTACLE_SPAWN_OFFSET + random_obstacle_offset)
+            if(new_player_x + BLOCK_SPAWN_OFFSET > last_obstacle_spawned_at + OBSTACLE_SPAWN_OFFSET + random_obstacle_offset)
             {
                 last_obstacle_spawned_at = new_player_x + BLOCK_SPAWN_OFFSET;
-                random_obstacle_offset = (float)(rand() % RAND_OBSTACLE_BAND);
                 if(rand() % 2 == 0)
                     spawn_wall(entities, last_obstacle_spawned_at);
                 else
                     spawn_cloud(entities, last_obstacle_spawned_at);
+                random_obstacle_offset = (float)(rand() % RAND_OBSTACLE_BAND);
             }
 
             this->wave_it(entities);

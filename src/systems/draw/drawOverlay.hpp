@@ -1,3 +1,6 @@
+#ifndef DRAWOVERLAYSDASDASDASSD
+#define DRAWOVERLAYSDASDASDASSD
+
 #include "game.hpp"
 
 #include "components/position.hpp"
@@ -65,3 +68,5 @@ class OverlayDrawSystem {
         Game *game;
         SDL_Texture *overlayTexture;
 };
+
+#endif

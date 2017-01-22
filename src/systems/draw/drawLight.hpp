@@ -1,3 +1,7 @@
+#ifndef DRAWOVERLAYSDALIGHTSDASDASSD
+#define DRAWOVERLAYSDALIGHTSDASDASSD
+
+
 #include "game.hpp"
 #include "components/drawable.hpp"
 #include "components/position.hpp"
@@ -25,7 +29,7 @@ class LightDrawSystem {
 
     void update(entityx::EntityManager &es, entityx::EventManager &events,
                 entityx::TimeDelta dt) {
-        auto playerPos = game->get_player().component<Position>()->position();
+        auto playerPos = game->player.component<Position>()->position();
         auto offset = playerPos - glm::vec2(GAME_WIDTH / 4.0f, GAME_HEIGHT) / 2.0f;
         offset.y = glm::min(offset.y, 50.0f);
 
@@ -84,3 +88,5 @@ class LightDrawSystem {
     Game *game;
     SDL_Texture *lightTexture;
 };
+
+#endif

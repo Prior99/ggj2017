@@ -61,7 +61,7 @@ public:
             }
         }
 
-        float player_x = game->get_player().component<Position>()->position.x;
+        float player_x = game->player.component<Position>()->position.x;
         update_mermaid(player_x);
         update_heli(player_x);
 
@@ -81,7 +81,7 @@ public:
     }
 
     void dead_update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
-        float player_x = game->get_player().component<Position>()->position.x;
+        float player_x = game->player.component<Position>()->position.x;
         update_heli(player_x);
         for(int i=0; i<10; i++) {
             float x = rand() % WIDTH + player_x - PLAYER_OFFSET;
@@ -92,7 +92,7 @@ public:
 
 	void update(entityx::EntityManager& entities, entityx::EventManager &events, entityx::TimeDelta dt) {
         total_time += dt;
-        if(!game->get_player().component<Player>()->game_over)
+        if(!game->player.component<Player>()->game_over)
         {
             normal_update(entities, events, dt);
         }

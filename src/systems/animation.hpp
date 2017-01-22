@@ -7,8 +7,6 @@
 
 class AnimationSystem : public entityx::System<AnimationSystem> {
     public:
-        AnimationSystem() {}
-
         void update(entityx::EntityManager &es, entityx::EventManager &events, double dt) {
             entityx::ComponentHandle<Drawable> drawable;
             for(entityx::Entity entity: es.entities_with_components(drawable)) {

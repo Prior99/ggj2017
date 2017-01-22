@@ -10,6 +10,7 @@
 #include "components/stackedDrawable.hpp"
 #include "components/block.hpp"
 #include "components/game-text.hpp"
+#include "components/layer.hpp"
 
 #include "utils.hpp"
 
@@ -102,7 +103,7 @@ class EntityDrawSystem {
         entityx::ComponentHandle<Drawable> drawable = entity.component<Drawable>();
         entityx::ComponentHandle<Block> block = entity.component<Block>();
         auto pos = position->position - offset;
-        auto playerpos = game->get_player().component<Position>()->position;
+        auto playerpos = game->player.component<Position>()->position;
         auto texture = game->res_manager().texture("water");
         int width, height;
         SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
@@ -140,7 +141,7 @@ class EntityDrawSystem {
         entityx::ComponentHandle<Position> position = entity.component<Position>();
         entityx::ComponentHandle<GameText> text = entity.component<GameText>();
         bool fast = text->isFast();
-        auto player = game->get_player();
+        auto player = game->player;
         auto pp = player.component<Position>()->position;
         auto pos =  (fast ? pp - glm::vec2(150, 100) + position->position: position->position) - offset;
         position->position.y -= 1;
@@ -203,7 +204,9 @@ class EntityDrawSystem {
             entityx::EventManager &events,
             entityx::TimeDelta dt)
     {
-        auto player = game->get_player();
+        auto player = game->player;
+        if(!player.valid())
+            return;
         auto position = player.component<Position>();
         glm::vec2 offset = glm::vec2(position->position.x - PLAYER_OFFSET, 0.0);
 

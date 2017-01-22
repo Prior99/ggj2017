@@ -25,9 +25,10 @@ static const float DESPAWN_OFFSET = 800.0;
 static const float BLOCK_SPAWN_OFFSET = 1300.0;
 
 // MIN distance between two obstacles
-static const float OBSTACLE_SPAWN_OFFSET = 200.0;
-static const int RAND_OBSTACLE_BAND = 200;
+static const float OBSTACLE_SPAWN_OFFSET = 800.0;
+static const int RAND_OBSTACLE_BAND = 1000;
 static const float OBSTACLE_SPEED = 50.0;
+
 
 static const float COLLECTABLE_BAND = 3; // portion of the screen in which items spawn
 static const float PROTECTED_TOP = 120; // pixels at top, in which no items spawn
@@ -35,6 +36,11 @@ static const float DROP_SPEED = 800;
 static const double TOKEN_SPAWN_PERIOD = 0.8;
 static const double TOKEN_SPAWN_VARIATION = 0.5;
 static const float MAX_SPAWN_DISTANCE = 150;
+
+static const int MIN_WALL_HEIGHT = 500;
+static const int MAX_WALL_HEIGHT = (int)PROTECTED_TOP + 50;
+static const int MIN_CLOUD_HEIGHT = MAX_WALL_HEIGHT;
+static const int MAX_CLOUD_HEIGHT = 0;
 
 static const float TEXT_DURATION = 2.0f;
 
@@ -55,5 +61,8 @@ static const int DEATH_BOARD_HEIGHT = 720;
 
 static const int CLOUD_WIDTH = 350;
 static const int CLOUD_HEIGHT = 260;
+
+static const int INIT_SCREEN_WIDTH = 1280;
+static const int INIT_SCREEN_HEIGHT = 720;
 
 #endif
